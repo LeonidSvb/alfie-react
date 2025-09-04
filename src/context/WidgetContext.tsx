@@ -189,64 +189,15 @@ export function WidgetProvider({ children }: WidgetProviderProps) {
         type: WidgetActionType.SET_TRIP_CONTENT,
         payload: tripData.tripContent
       });
+      
+      // Set empty experts array (no expert functionality)
+      dispatch({
+        type: WidgetActionType.SET_MATCHED_EXPERTS,
+        payload: []
+      });
 
-      // Step 2: Search for matching experts using AI-powered system
-      try {
-        console.log('🤖 Starting AI-powered expert search...');
-        
-        const expertResponse = await fetch('/api/experts/ai-search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            answers: state.answers
-          }),
-        });
-
-        if (!expertResponse.ok) {
-          throw new Error(`Expert search API failed: ${expertResponse.status}`);
-        }
-
-        const expertData = await expertResponse.json();
-        
-        if (expertData.success) {
-          console.log('🎯 AI found experts:', {
-            count: expertData.totalFound,
-            generatedTags: expertData.generatedTags,
-            formula: expertData.airtableFormula?.substring(0, 100) + '...'
-          });
-          
-          dispatch({
-            type: WidgetActionType.SET_MATCHED_EXPERTS,
-            payload: expertData.experts || []
-          });
-        } else {
-          throw new Error(expertData.error || 'Expert search failed');
-        }
-        
-      } catch (expertError) {
-        console.error('🚨 AI Expert search failed:', expertError);
-        
-        // Fallback to old system if AI fails
-        try {
-          console.log('🔄 Falling back to legacy expert search...');
-          const { searchExperts } = await import('@/utils/expertFilter');
-          const fallbackResult = await searchExperts(state.answers);
-          
-          dispatch({
-            type: WidgetActionType.SET_MATCHED_EXPERTS,
-            payload: fallbackResult.experts || []
-          });
-        } catch (fallbackError) {
-          console.error('🚨 Fallback expert search also failed:', fallbackError);
-          // Don't fail the whole process if expert search fails
-          dispatch({
-            type: WidgetActionType.SET_MATCHED_EXPERTS,
-            payload: []
-          });
-        }
-      }
+      // Trip generation completed successfully 
+      console.log('✅ Trip generation completed successfully');
 
     } catch (error) {
       dispatch({

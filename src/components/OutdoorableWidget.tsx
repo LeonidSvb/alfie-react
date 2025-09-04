@@ -109,6 +109,7 @@ const OutdoorableWidget: React.FC = () => {
     if (state.currentQuestionIndex < visibleQuestions.length - 1) {
       nextQuestion();
       setSelectedOptions([]);
+      setCustomInputValue(''); // Clear custom input when moving to next question
     } else {
       handleGenerateTrip();
     }
@@ -227,9 +228,6 @@ const OutdoorableWidget: React.FC = () => {
         <div className="alfie-final-results">
           <div className="alfie-results-content">
             <div className="alfie-results-header">
-              <div className="alfie-avatar">
-                <img src="/images/alfie-avatar.png" alt="Alfie" />
-              </div>
               <h2>Your Custom TripGuide</h2>
             </div>
             
@@ -315,6 +313,7 @@ const OutdoorableWidget: React.FC = () => {
         {currentQuestion.type === 'text' ? (
           <div className="alfie-custom-input">
             <input
+              key={`text-${currentQuestion.key}-${state.currentQuestionIndex}`}
               className="alfie-input"
               value={customInputValue}
               onChange={(e) => setCustomInputValue(e.target.value)}
@@ -339,6 +338,7 @@ const OutdoorableWidget: React.FC = () => {
                 return (
                   <div key={index} style={{ gridColumn: '1 / -1' }}>
                     <input
+                      key={`other-${currentQuestion.key}-${state.currentQuestionIndex}`}
                       className="alfie-input"
                       value={customInputValue}
                       onChange={(e) => setCustomInputValue(e.target.value)}

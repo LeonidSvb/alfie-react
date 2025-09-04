@@ -112,7 +112,17 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({ destination }) => {
         <div className="alfie-avatar" style={{ minWidth: '40px' }}>
           <img src="/images/alfie-avatar.png" alt="Alfie" style={{ width: '40px', height: '40px' }} />
         </div>
-        <div className="alfie-comment" style={{ fontSize: '13px' }}>
+        <div style={{ 
+          background: 'var(--alfie-dark-green)',
+          color: 'var(--alfie-text)', 
+          padding: '15px 18px',
+          borderRadius: '18px',
+          fontSize: '13px',
+          lineHeight: '1.4',
+          fontWeight: '500',
+          flex: '1',
+          marginTop: '2px'
+        }}>
           💡 <strong>Fun Travel Fact:</strong><br/>
           {facts[currentFactIndex]}
         </div>
