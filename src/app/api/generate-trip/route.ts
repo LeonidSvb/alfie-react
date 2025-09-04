@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { inspireFlowPrompt } from '@/data/prompts/inspire-flow-prompt';
 import { planningFlowPrompt } from '@/data/prompts/planning-flow-prompt';
@@ -13,34 +13,19 @@ interface TripGenerationRequest {
   flow: 'inspire' | 'planning';
 }
 
-interface TripGenerationResponse {
-  success: boolean;
-  tripContent?: string;
-  error?: string;
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<TripGenerationResponse>
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
-    });
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    console.log('🔵 API called with body:', JSON.stringify(req.body, null, 2));
+    console.log('🔵 API called');
     
-    const { answers, flow }: TripGenerationRequest = req.body;
+    const body: TripGenerationRequest = await request.json();
+    const { answers, flow } = body;
 
     if (!answers || !flow) {
       console.error('❌ Missing required parameters');
-      return res.status(400).json({
+      return NextResponse.json({
         success: false,
         error: 'Missing required parameters: answers and flow'
-      });
+      }, { status: 400 });
     }
 
     console.log('✅ Parameters validated:', { flow, answersCount: Object.keys(answers).length });
@@ -89,7 +74,7 @@ export default async function handler(
     };
     
     console.log('🟢 Sending successful response');
-    return res.status(200).json(response);
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('🔴 Error generating trip:', error);
@@ -121,6 +106,6 @@ Contact our travel experts to finalize your personalized itinerary and make your
     };
     
     console.log('🟡 Sending fallback response');
-    return res.status(200).json(fallbackResponse);
+    return NextResponse.json(fallbackResponse);
   }
 }
