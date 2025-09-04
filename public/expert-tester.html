@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Matching Tester - Real Data</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 { 
+            color: #2d5a3d; 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .preset-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2d5a3d;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+        }
+        .test-button {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1e3d28 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 90, 61, 0.3);
+        }
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d5a3d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .expert-card {
+            border: 3px solid #2d5a3d;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+            box-shadow: 0 10px 30px rgba(45, 90, 61, 0.1);
+        }
+        .expert-header {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            align-items: flex-start;
+        }
+        .expert-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d5a3d 0%, #1e3d28 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(45, 90, 61, 0.3);
+        }
+        .expert-info h3 {
+            margin: 0 0 8px 0;
+            color: #2d5a3d;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .expert-profession {
+            color: #666;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .match-score {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        .expert-bio {
+            margin: 25px 0;
+            line-height: 1.7;
+            color: #555;
+            font-size: 16px;
+            background: rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .expert-tags {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: linear-gradient(135deg, #e0f2e0 0%, #c8e6c9 100%);
+            color: #2d5a3d;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid rgba(45, 90, 61, 0.1);
+        }
+        .action-buttons {
+            display: flex; 
+            gap: 15px; 
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .book-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+        .book-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+        .email-button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .email-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        .error {
+            background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+            color: #d32f2f;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid rgba(211, 47, 47, 0.2);
+            font-weight: 500;
+        }
+        .status-info {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(45, 90, 61, 0.1);
+        }
+        .status-info h3 {
+            color: #2d5a3d;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+        .status-info ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+        .status-info li {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Expert Matching Tester</h1>
+        <div class="subtitle">Real Airtable Data • Instant Testing • Live Matching</div>
+        
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="loadPreset('hiking')">
+                🥾 Utah Hiking Adventure
+            </button>
+            <button class="preset-btn" onclick="loadPreset('family')">
+                👨‍👩‍👧‍👦 Family Yellowstone Trip
+            </button>
+            <button class="preset-btn" onclick="loadPreset('solo')">
+                🧳 Solo Extreme Adventure
+            </button>
+            <button class="preset-btn" onclick="loadPreset('luxury')">
+                💎 European Luxury Experience
+            </button>
+        </div>
+
+        <form id="testForm">
+            <div class="form-group">
+                <label>🌍 Destination:</label>
+                <input type="text" id="destination" placeholder="Grand Canyon, Utah, Italy..." required>
+            </div>
+
+            <div class="form-group">
+                <label>🎯 Activities:</label>
+                <input type="text" id="activities" placeholder="Hiking, Photography, Wine tasting..." required>
+            </div>
+
+            <div class="form-group">
+                <label>👥 Traveler Type:</label>
+                <select id="travelerType" required>
+                    <option value="">Select traveler type...</option>
+                    <option value="Solo">Solo Traveler</option>
+                    <option value="Couple">Couple</option>
+                    <option value="Family with kids">Family with Kids</option>
+                    <option value="Friends">Group of Friends</option>
+                    <option value="Multi-gen family">Multi-Generation Family</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>💪 Experience Level:</label>
+                <select id="experienceLevel" required>
+                    <option value="">Select experience level...</option>
+                    <option value="Beginner">Beginner - New to adventures</option>
+                    <option value="Moderate">Moderate - Some experience</option>
+                    <option value="Advanced">Advanced - Very experienced</option>
+                    <option value="Extreme">Extreme - Expert level</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📅 Trip Duration:</label>
+                <input type="text" id="duration" placeholder="7 days, 2 weeks, 1 month..." required>
+            </div>
+
+            <button type="submit" class="test-button" id="submitBtn">
+                🔍 Find My Perfect Expert
+            </button>
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div>🔍 Analyzing your preferences and matching with experts...</div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="result"></div>
+
+        <div class="status-info">
+            <h3>📊 System Status</h3>
+            <ul>
+                <li>✅ Connected to live Airtable database</li>
+                <li>✅ Real expert profiles and contact information</li>
+                <li>✅ Smart matching algorithm with 65+ tags</li>
+                <li>✅ Instant testing with preset scenarios</li>
+                <li>✅ Direct booking and email links</li>
+            </ul>
+            <p style="margin-top: 15px; color: #666; font-weight: 500;">
+                <strong>Test URL:</strong> http://localhost:3007/expert-tester.html
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const presets = {
+            hiking: {
+                destination: 'Utah National Parks (Zion, Bryce)',
+                activities: 'Hiking, Photography, Canyoneering',
+                travelerType: 'Solo',
+                experienceLevel: 'Moderate',
+                duration: '10 days'
+            },
+            family: {
+                destination: 'Yellowstone National Park',
+                activities: 'Wildlife viewing, Easy hikes, Geysers',
+                travelerType: 'Family with kids',
+                experienceLevel: 'Beginner',
+                duration: '1 week'
+            },
+            solo: {
+                destination: 'Patagonia, Argentina',
+                activities: 'Backpacking, Mountaineering, Extreme hiking',
+                travelerType: 'Solo',
+                experienceLevel: 'Extreme',
+                duration: '3 weeks'
+            },
+            luxury: {
+                destination: 'Italian Dolomites',
+                activities: 'Luxury hiking, Wine tasting, Cultural tours',
+                travelerType: 'Couple',
+                experienceLevel: 'Moderate',
+                duration: '2 weeks'
+            }
+        };
+
+        function loadPreset(type) {
+            const preset = presets[type];
+            document.getElementById('destination').value = preset.destination;
+            document.getElementById('activities').value = preset.activities;
+            document.getElementById('travelerType').value = preset.travelerType;
+            document.getElementById('experienceLevel').value = preset.experienceLevel;
+            document.getElementById('duration').value = preset.duration;
+            
+            // Clear previous results
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function displayExpert(expert) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">${expert.name.charAt(0)}</div>
+                        <div class="expert-info">
+                            <h3>${expert.name}</h3>
+                            <p class="expert-profession">${expert.profession}</p>
+                            <span class="match-score">${expert.matchScore}% Match</span>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-bio">
+                        ${expert.shortBio}
+                    </div>
+                    
+                    <div class="expert-tags">
+                        ${expert.matchedTags.map(tag => 
+                            `<span class="tag">${tag.replace(/_/g, ' ')}</span>`
+                        ).join('')}
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="${expert.profileUrl}" target="_blank" class="book-button">
+                            📅 Book Consultation
+                        </a>
+                        <a href="mailto:${expert.email}?subject=Travel Planning Inquiry - Found via Expert Matcher" class="email-button">
+                            ✉️ Email ${expert.name.split(' ')[0]}
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = `❌ ${message}`;
+            errorDiv.style.display = 'block';
+        }
+
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '🔍 Finding Your Expert...';
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+            
+            // Get form data
+            const formData = {
+                destination: document.getElementById('destination').value,
+                activities: document.getElementById('activities').value,
+                travelerType: document.getElementById('travelerType').value,
+                experienceLevel: document.getElementById('experienceLevel').value,
+                duration: document.getElementById('duration').value
+            };
+            
+            try {
+                const response = await fetch('/api/simple-expert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.expert) {
+                    displayExpert(data.expert);
+                } else {
+                    showError(data.error || 'Failed to find matching expert');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Network error - please check if the server is running');
+            } finally {
+                // Reset UI
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🔍 Find My Perfect Expert';
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        // Load default preset
+        loadPreset('hiking');
+    </script>
+</body>
+</html>

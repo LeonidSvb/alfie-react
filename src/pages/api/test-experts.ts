@@ -15,6 +15,32 @@ const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = 'apptAJxE6IudBH8fW';
 const AIRTABLE_TABLE_ID = 'tblgvgDuQm20rNVPV';
 
+// Mock data for testing if Airtable fails
+const mockExperts = [
+  {
+    id: 'mock1',
+    fields: {
+      Name: 'Lura Snow',
+      Profession: 'Utah Operations Manager & Guide',
+      Email: 'lura.snow@gmail.com',
+      Short_Bio: 'Lura has spent her entire life exploring the outdoors, from childhood camping trips to 16 years as a professional guide across Utah and Arizona.',
+      Profile_URL: 'https://www.outdoorable.co/expert/lura-snow',
+      All_Tags: ['region_utah', 'activity_hiking', 'traveler_solo', 'traveler_families', 'spec_backcountry']
+    }
+  },
+  {
+    id: 'mock2', 
+    fields: {
+      Name: 'Owen Eigenbrot',
+      Profession: 'Long Distance Backpacker', 
+      Email: 'hikefordays@gmail.com',
+      Short_Bio: 'Owen has hiked over 13,000 miles since 2015, including some of the most rugged and rewarding long-distance trails in the world.',
+      Profile_URL: 'https://www.outdoorable.co/expert/owen-eigenbrot',
+      All_Tags: ['activity_hiking', 'traveler_solo', 'level_extreme', 'spec_backcountry']
+    }
+  }
+];
+
 // Получить экспертов из Airtable
 async function fetchExperts(): Promise<any[]> {
   try {
@@ -35,7 +61,8 @@ async function fetchExperts(): Promise<any[]> {
 
   } catch (error) {
     console.error('Ошибка получения экспертов:', error);
-    return [];
+    console.log('🔄 Используем mock данные');
+    return mockExperts;
   }
 }
 

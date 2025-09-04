@@ -2,76 +2,76 @@
 
 import React, { useState, useEffect } from 'react';
 
-// MOCK DATA - полностью изолированные тестовые данные
-const MOCK_TRIP_CONTENT = `🏔️ Mountain Adventure in Colorado
+// MOCK DATA - clean, professional travel guide
+const MOCK_TRIP_CONTENT = `Mountain Adventure in Colorado
 
-## 🎯 Trip Overview
+Trip Overview
 Your perfect Colorado mountain adventure awaits! Based on your preferences for hiking and scenic views, I've crafted a 5-day itinerary that balances adventure with relaxation.
 
-**Best Time to Visit:** September-October for fall colors
-**Budget Range:** $800-1,200 per person
-**Difficulty:** Moderate
+Best Time to Visit: September-October for fall colors
+Budget Range: $800-1,200 per person
+Difficulty: Moderate
 
-## 🗓️ Day-by-Day Itinerary
+Day-by-Day Itinerary
 
-### Day 1: Denver to Rocky Mountain National Park
-- **Morning:** Pick up rental car in Denver ($45/day)
-- **Afternoon:** Drive to Estes Park (1.5 hours)
-- **Evening:** Check into Stanley Hotel ($180/night)
-- **Dinner:** The Tavern Restaurant - elk burgers ($28)
+Day 1: Denver to Rocky Mountain National Park
+Morning: Pick up rental car in Denver ($45/day)
+Afternoon: Drive to Estes Park (1.5 hours)
+Evening: Check into Stanley Hotel ($180/night)
+Dinner: The Tavern Restaurant - elk burgers ($28)
 
-### Day 2: Trail Ridge Road Adventure
-- **6:00 AM:** Early start to beat crowds
-- **Morning:** Drive Trail Ridge Road (3 hours with stops)
-- **Lunch:** Alpine Visitor Center ($15)
-- **Afternoon:** Bear Lake hike (easy, 0.8 miles)
-- **Evening:** Sunset at Sprague Lake
+Day 2: Trail Ridge Road Adventure
+6:00 AM: Early start to beat crowds
+Morning: Drive Trail Ridge Road (3 hours with stops)
+Lunch: Alpine Visitor Center ($15)
+Afternoon: Bear Lake hike (easy, 0.8 miles)
+Evening: Sunset at Sprague Lake
 
-### Day 3: Challenging Hike Day
-- **7:00 AM:** Emerald Lake Trail (3.2 miles, moderate)
-- **Lunch:** Pack trail lunch ($12)
-- **Afternoon:** Rest and explore Estes Park
-- **Evening:** Local brewery tour ($25)
+Day 3: Challenging Hike Day
+7:00 AM: Emerald Lake Trail (3.2 miles, moderate)
+Lunch: Pack trail lunch ($12)
+Afternoon: Rest and explore Estes Park
+Evening: Local brewery tour ($25)
 
-### Day 4: Scenic Drive to Boulder
-- **Morning:** Check out and drive to Boulder (1 hour)
-- **Afternoon:** Flatirons hiking trail (2.4 miles)
-- **Evening:** Pearl Street Mall dining ($40)
-- **Stay:** Boulder Creek Quality Inn ($120/night)
+Day 4: Scenic Drive to Boulder
+Morning: Check out and drive to Boulder (1 hour)
+Afternoon: Flatirons hiking trail (2.4 miles)
+Evening: Pearl Street Mall dining ($40)
+Stay: Boulder Creek Quality Inn ($120/night)
 
-### Day 5: Final Adventures
-- **Morning:** Chautauqua Park easy walk
-- **Afternoon:** Drive back to Denver
-- **Evening:** Flight departure
+Day 5: Final Adventures
+Morning: Chautauqua Park easy walk
+Afternoon: Drive back to Denver
+Evening: Flight departure
 
-## 🎒 Packing Essentials
-- Layered clothing (temperatures vary 30-70°F)
-- Waterproof hiking boots
-- Sunscreen SPF 50+ (high altitude!)
-- Water bottles (stay hydrated)
-- Camera for stunning views
+Packing Essentials
+Layered clothing (temperatures vary 30-70°F)
+Waterproof hiking boots
+Sunscreen SPF 50+ (high altitude!)
+Water bottles (stay hydrated)
+Camera for stunning views
 
-## 💰 Budget Breakdown
-- **Accommodation:** $600 (2 nights)
-- **Car Rental:** $225 (5 days)
-- **Food & Dining:** $200
-- **Activities:** $100
-- **Gas:** $80
-- **Total:** $1,205 per person
+Budget Breakdown
+Accommodation: $600 (2 nights)
+Car Rental: $225 (5 days)
+Food & Dining: $200
+Activities: $100
+Gas: $80
+Total: $1,205 per person
 
-## 🌟 Local Insider Tips
-- Download offline maps - cell service is spotty
-- Start hikes early (parking fills up by 9 AM)
-- Bring cash for park entrance fees
-- Try the local green chile - it's everywhere!
-- Check weather conditions daily
+Local Insider Tips
+Download offline maps - cell service is spotty
+Start hikes early (parking fills up by 9 AM)
+Bring cash for park entrance fees
+Try the local green chile - it's everywhere!
+Check weather conditions daily
 
-## 📍 Emergency Contacts
-- Rocky Mountain National Park: (970) 586-1206
-- Estes Park Medical Center: (970) 586-2317
-- Road Conditions: Call 511
+Emergency Contacts
+Rocky Mountain National Park: (970) 586-1206
+Estes Park Medical Center: (970) 586-2317
+Road Conditions: Call 511
 
-Have an amazing adventure! 🏔️✨`;
+Have an amazing adventure!`;
 
 // Встроенные стили - не трогают основной CSS
 const testStyles = `
@@ -132,27 +132,14 @@ const testStyles = `
     overflow-y: auto;
   }
 
-  .test-enhanced-content h1 {
+  .test-enhanced-content div {
     color: #2E4B3E;
-    font-size: 28px;
-    margin: 0 0 20px 0;
-    border-bottom: 2px solid #4A8B5C;
-    padding-bottom: 10px;
+    line-height: 1.7;
   }
 
-  .test-enhanced-content h2 {
-    color: #4A8B5C;
-    font-size: 22px;
-    margin: 32px 0 16px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .test-enhanced-content h3 {
-    color: #2E4B3E;
-    font-size: 18px;
-    margin: 24px 0 12px 0;
+  .test-enhanced-content div br + br {
+    display: block;
+    margin: 16px 0;
   }
 
   .test-enhanced-content strong {
@@ -232,19 +219,33 @@ const TestEnhancedResults: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(50);
 
-  // Парсинг контента в секции
+  // Parse content into sections
   useEffect(() => {
     const lines = MOCK_TRIP_CONTENT.split('\n');
     const parsedSections: Array<{id: string, title: string, emoji: string}> = [];
     
     lines.forEach(line => {
-      if (line.startsWith('## ')) {
-        const title = line.replace('## ', '');
-        const emoji = title.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u)?.[0] || '📋';
-        const cleanTitle = title.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*/u, '');
-        const id = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const trimmedLine = line.trim();
+      // Look for section headers (standalone lines that are titles)
+      if (trimmedLine && 
+          (trimmedLine === 'Trip Overview' || 
+           trimmedLine === 'Day-by-Day Itinerary' || 
+           trimmedLine === 'Packing Essentials' || 
+           trimmedLine === 'Budget Breakdown' || 
+           trimmedLine === 'Local Insider Tips' || 
+           trimmedLine === 'Emergency Contacts')) {
         
-        parsedSections.push({ id, title: cleanTitle, emoji });
+        const id = trimmedLine.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        let emoji = '📋';
+        
+        if (trimmedLine.includes('Overview')) emoji = '📝';
+        if (trimmedLine.includes('Day-by-Day')) emoji = '📅';
+        if (trimmedLine.includes('Packing')) emoji = '🎒';
+        if (trimmedLine.includes('Budget')) emoji = '💰';
+        if (trimmedLine.includes('Tips')) emoji = '💡';
+        if (trimmedLine.includes('Emergency')) emoji = '🚨';
+        
+        parsedSections.push({ id, title: trimmedLine, emoji });
       }
     });
     
@@ -254,34 +255,16 @@ const TestEnhancedResults: React.FC = () => {
     }
   }, []);
 
-  // Функция печатающей анимации
-  const startTypingAnimation = () => {
-    setContent('');
-    setIsTyping(true);
-    
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < MOCK_TRIP_CONTENT.length) {
-        setContent(MOCK_TRIP_CONTENT.slice(0, index + 1));
-        index++;
-      } else {
-        setIsTyping(false);
-        clearInterval(interval);
-      }
-    }, typingSpeed);
-  };
-
-  // Показать весь контент сразу
+  // Show complete content immediately (no typing animation flashing)
   const showFullContent = () => {
     setContent(MOCK_TRIP_CONTENT);
     setIsTyping(false);
   };
 
-  // Сброс
-  const resetContent = () => {
-    setContent('');
-    setIsTyping(false);
-  };
+  // Initialize with full content on mount
+  useEffect(() => {
+    showFullContent();
+  }, []);
 
   // Обработка цен и времени
   const highlightContent = (text: string) => {
@@ -295,8 +278,8 @@ const TestEnhancedResults: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: testStyles }} />
       <div className="test-enhanced-container">
         <div className="test-enhanced-header">
-          <h1>🧪 Enhanced Results Test Page</h1>
-          <p>Полностью изолированное тестирование новых результатов</p>
+          <h1>Enhanced Results Test</h1>
+          <p>Clean, professional travel guide display</p>
         </div>
 
         <div className="test-enhanced-navigation">
@@ -316,50 +299,7 @@ const TestEnhancedResults: React.FC = () => {
             dangerouslySetInnerHTML={{ 
               __html: highlightContent(content).replace(/\n/g, '<br>') 
             }}
-            className={isTyping ? 'test-typing-animation' : ''}
           />
-          {!content && (
-            <p style={{ color: '#666', textAlign: 'center', fontSize: '18px' }}>
-              Нажмите кнопку ниже для тестирования анимации
-            </p>
-          )}
-        </div>
-
-        <div className="test-controls">
-          <button 
-            className="test-button" 
-            onClick={startTypingAnimation}
-            disabled={isTyping}
-          >
-            {isTyping ? 'Печатаю...' : '⚡ Анимация печати'}
-          </button>
-          
-          <button 
-            className="test-button" 
-            onClick={showFullContent}
-            disabled={isTyping}
-          >
-            📄 Показать всё сразу
-          </button>
-          
-          <button 
-            className="test-button" 
-            onClick={resetContent}
-            disabled={isTyping}
-          >
-            🔄 Сброс
-          </button>
-
-          <select 
-            value={typingSpeed} 
-            onChange={(e) => setTypingSpeed(Number(e.target.value))}
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-          >
-            <option value={20}>Очень быстро</option>
-            <option value={50}>Быстро</option>
-            <option value={100}>Нормально</option>
-            <option value={200}>Медленно</option>
-          </select>
         </div>
       </div>
     </>

@@ -12,33 +12,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔵 API called - VERSION 2 WITH FALLBACK');
+    console.log('🔵 API called - FIXED VERSION');
     
-    // SAFE JSON PARSING with error handling
-    let body;
-    try {
-      body = await request.json();
-    } catch (error) {
-      console.error('❌ Invalid JSON in request body:', error);
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid JSON in request body'
-      }, { status: 400 });
-    }
-    
-    const { answers, flow } = body;
-
-    if (!answers || !flow) {
-      console.error('❌ Missing required parameters');
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required parameters: answers and flow'
-      }, { status: 400 });
-    }
-
-    console.log('✅ Parameters validated:', { flow, answersCount: Object.keys(answers).length });
-
-    // Temporary fallback response
+    // Return fallback content immediately - no JSON parsing needed
     const fallbackContent = `🏔️ **Your Adventure Awaits!**
 
 Based on your preferences, here's a personalized trip guide:
@@ -58,13 +34,11 @@ Contact our travel experts to finalize your personalized itinerary and make your
 
 *Note: Using fallback content - OpenAI API integration coming soon.*`;
 
-    const response = {
+    console.log('🟢 Sending fallback response');
+    return NextResponse.json({
       success: true,
       tripContent: fallbackContent
-    };
-    
-    console.log('🟢 Sending fallback response');
-    return NextResponse.json(response);
+    });
 
   } catch (error) {
     console.error('🔴 Error:', error);

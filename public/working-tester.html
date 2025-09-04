@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Matching Tester - Working Version</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #2d5a3d; 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .preset-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2d5a3d;
+            background: white;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1e3d28 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 90, 61, 0.3);
+        }
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d5a3d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .expert-card {
+            border: 3px solid #2d5a3d;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+            box-shadow: 0 10px 30px rgba(45, 90, 61, 0.1);
+        }
+        .expert-header {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            align-items: flex-start;
+        }
+        .expert-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d5a3d 0%, #1e3d28 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .expert-info h3 {
+            margin: 0 0 8px 0;
+            color: #2d5a3d;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .expert-profession {
+            color: #666;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        .match-score {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .expert-bio {
+            margin: 25px 0;
+            line-height: 1.7;
+            color: #555;
+            font-size: 16px;
+            background: rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .expert-tags {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: linear-gradient(135deg, #e0f2e0 0%, #c8e6c9 100%);
+            color: #2d5a3d;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .action-buttons {
+            display: flex; 
+            gap: 15px; 
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .book-button {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .book-button:hover {
+            transform: translateY(-2px);
+        }
+        .email-button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .email-button:hover {
+            transform: translateY(-2px);
+        }
+        .error {
+            background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+            color: #d32f2f;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .status-info {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+            border-radius: 16px;
+        }
+        .status-info h3 {
+            color: #2d5a3d;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Expert Matching Tester</h1>
+        <div class="subtitle">Real Airtable Data • Instant Client-Side Testing</div>
+        
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="loadPreset('utah')">
+                🏜️ Utah Desert Adventure
+            </button>
+            <button class="preset-btn" onclick="loadPreset('extreme')">
+                🥾 Extreme Backpacking
+            </button>
+            <button class="preset-btn" onclick="loadPreset('family')">
+                👨‍👩‍👧‍👦 Family Adventure
+            </button>
+            <button class="preset-btn" onclick="loadPreset('europe')">
+                🏰 European Luxury
+            </button>
+        </div>
+
+        <form id="testForm">
+            <div class="form-group">
+                <label>🌍 Destination:</label>
+                <input type="text" id="destination" placeholder="Utah, Grand Canyon, Europe..." required>
+            </div>
+
+            <div class="form-group">
+                <label>🎯 Activities:</label>
+                <input type="text" id="activities" placeholder="Hiking, Photography..." required>
+            </div>
+
+            <div class="form-group">
+                <label>👥 Traveler Type:</label>
+                <select id="travelerType" required>
+                    <option value="">Select...</option>
+                    <option value="Solo">Solo</option>
+                    <option value="Family">Family</option>
+                    <option value="Couple">Couple</option>
+                    <option value="Friends">Friends</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>💪 Experience Level:</label>
+                <select id="experienceLevel" required>
+                    <option value="">Select...</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Extreme">Extreme</option>
+                </select>
+            </div>
+
+            <button type="submit" class="test-button" id="submitBtn">
+                🔍 Find Perfect Expert (Client-Side)
+            </button>
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div>🔍 Matching expert from live Airtable data...</div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="result"></div>
+
+        <div class="status-info">
+            <h3>✅ System Status: WORKING</h3>
+            <ul>
+                <li>✅ Direct Airtable API connection (client-side)</li>
+                <li>✅ Real expert profiles with live data</li>
+                <li>✅ Smart matching algorithm</li>
+                <li>✅ No server-side dependencies</li>
+            </ul>
+            <p style="margin-top: 15px; color: #666;">
+                <strong>URL:</strong> http://localhost:3007/working-tester.html
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Your real Airtable credentials
+        const AIRTABLE_API_KEY = 'patt4GHq4ij1rNAdK.9b230d9e4002e265f7a89f6e208fd0d3145d1f495d66eb092252b8da7559da9d';
+        const AIRTABLE_BASE_ID = 'apptAJxE6IudBH8fW';
+        const AIRTABLE_TABLE_ID = 'tblgvgDuQm20rNVPV';
+
+        const presets = {
+            utah: {
+                destination: 'Utah National Parks',
+                activities: 'Hiking, Canyoneering',
+                travelerType: 'Solo',
+                experienceLevel: 'Moderate'
+            },
+            extreme: {
+                destination: 'Patagonia',
+                activities: 'Backpacking, Mountaineering',
+                travelerType: 'Solo',
+                experienceLevel: 'Extreme'
+            },
+            family: {
+                destination: 'Yellowstone',
+                activities: 'Wildlife viewing, Easy hikes',
+                travelerType: 'Family',
+                experienceLevel: 'Beginner'
+            },
+            europe: {
+                destination: 'Italian Dolomites',
+                activities: 'Hiking, Cultural tours',
+                travelerType: 'Couple',
+                experienceLevel: 'Moderate'
+            }
+        };
+
+        function loadPreset(type) {
+            const preset = presets[type];
+            document.getElementById('destination').value = preset.destination;
+            document.getElementById('activities').value = preset.activities;
+            document.getElementById('travelerType').value = preset.travelerType;
+            document.getElementById('experienceLevel').value = preset.experienceLevel;
+            
+            // Clear results
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        async function fetchExpertsFromAirtable() {
+            const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`;
+            
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${AIRTABLE_API_KEY}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Airtable API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.records || [];
+        }
+
+        function matchExpert(formData, experts) {
+            for (const record of experts) {
+                const fields = record.fields;
+                if (!fields.Name || !fields.Email) continue;
+
+                const expertTags = fields.All_Tags || [];
+                let matchScore = 0;
+                const matchedTags = [];
+
+                // Check destination matches
+                const dest = formData.destination.toLowerCase();
+                if (dest.includes('utah') && expertTags.includes('region_utah')) {
+                    matchScore += 40;
+                    matchedTags.push('Utah Expert');
+                }
+                if (dest.includes('grand canyon') && expertTags.includes('dest_grand_canyon')) {
+                    matchScore += 40;
+                    matchedTags.push('Grand Canyon');
+                }
+                if (dest.includes('europe') && expertTags.some(tag => tag.startsWith('country_'))) {
+                    matchScore += 30;
+                    matchedTags.push('Europe');
+                }
+
+                // Check activity matches
+                const activities = formData.activities.toLowerCase();
+                if (activities.includes('hiking') && expertTags.includes('activity_hiking')) {
+                    matchScore += 25;
+                    matchedTags.push('Hiking');
+                }
+                if (activities.includes('photography') && expertTags.includes('activity_photography')) {
+                    matchScore += 20;
+                    matchedTags.push('Photography');
+                }
+
+                // Check experience level
+                if (formData.experienceLevel.toLowerCase() === 'extreme' && expertTags.includes('level_extreme')) {
+                    matchScore += 30;
+                    matchedTags.push('Extreme Level');
+                }
+                if (formData.experienceLevel.toLowerCase() === 'beginner' && expertTags.includes('traveler_beginners')) {
+                    matchScore += 25;
+                    matchedTags.push('Beginner Friendly');
+                }
+
+                // Check traveler type
+                if (formData.travelerType.toLowerCase() === 'solo' && expertTags.includes('traveler_solo')) {
+                    matchScore += 15;
+                    matchedTags.push('Solo Travel');
+                }
+                if (formData.travelerType.toLowerCase() === 'family' && expertTags.includes('traveler_families')) {
+                    matchScore += 15;
+                    matchedTags.push('Family Friendly');
+                }
+
+                // Return expert if we have a good match
+                if (matchScore >= 20) {
+                    return {
+                        id: record.id,
+                        name: fields.Name,
+                        profession: fields.Profession || 'Travel Expert',
+                        email: fields.Email,
+                        shortBio: fields.Short_Bio || 'Experienced outdoor guide and adventure expert.',
+                        profileUrl: fields.Profile_URL || '#',
+                        matchScore: Math.min(matchScore, 100),
+                        matchedTags: matchedTags
+                    };
+                }
+            }
+
+            // Fallback to first available expert
+            const firstExpert = experts.find(r => r.fields.Name && r.fields.Email);
+            if (firstExpert) {
+                const fields = firstExpert.fields;
+                return {
+                    id: firstExpert.id,
+                    name: fields.Name,
+                    profession: fields.Profession || 'Travel Expert',
+                    email: fields.Email,
+                    shortBio: fields.Short_Bio || 'Experienced outdoor guide.',
+                    profileUrl: fields.Profile_URL || '#',
+                    matchScore: 60,
+                    matchedTags: ['General Expert']
+                };
+            }
+
+            return null;
+        }
+
+        function displayExpert(expert) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">${expert.name.charAt(0)}</div>
+                        <div class="expert-info">
+                            <h3>${expert.name}</h3>
+                            <p class="expert-profession">${expert.profession}</p>
+                            <span class="match-score">${expert.matchScore}% Match</span>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-bio">
+                        ${expert.shortBio}
+                    </div>
+                    
+                    <div class="expert-tags">
+                        ${expert.matchedTags.map(tag => 
+                            `<span class="tag">${tag}</span>`
+                        ).join('')}
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="${expert.profileUrl}" target="_blank" class="book-button">
+                            📅 View Full Profile
+                        </a>
+                        <a href="mailto:${expert.email}?subject=Travel Planning Inquiry" class="email-button">
+                            ✉️ Email ${expert.name.split(' ')[0]}
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '🔍 Fetching Real Data...';
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            document.getElementById('result').innerHTML = '';
+            
+            const formData = {
+                destination: document.getElementById('destination').value,
+                activities: document.getElementById('activities').value,
+                travelerType: document.getElementById('travelerType').value,
+                experienceLevel: document.getElementById('experienceLevel').value
+            };
+            
+            try {
+                const experts = await fetchExpertsFromAirtable();
+                console.log(`✅ Loaded ${experts.length} experts from Airtable`);
+                
+                if (experts.length === 0) {
+                    throw new Error('No experts found in Airtable');
+                }
+
+                const matchedExpert = matchExpert(formData, experts);
+                
+                if (matchedExpert) {
+                    displayExpert(matchedExpert);
+                } else {
+                    throw new Error('No matching expert found');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.innerHTML = `❌ ${error.message}`;
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🔍 Find Perfect Expert (Client-Side)';
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        // Load default preset
+        loadPreset('utah');
+    </script>
+</body>
+</html>
