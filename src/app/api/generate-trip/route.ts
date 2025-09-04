@@ -1,17 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { inspireFlowPrompt } from '@/data/prompts/inspire-flow-prompt';
-import { planningFlowPrompt } from '@/data/prompts/planning-flow-prompt';
-import { UserAnswers } from '@/types';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-interface TripGenerationRequest {
-  answers: UserAnswers;
-  flow: 'inspire' | 'planning';
-}
 
 export async function GET() {
   return NextResponse.json({ 
@@ -24,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔵 API called');
     
-    const body: TripGenerationRequest = await request.json();
+    const body = await request.json();
     const { answers, flow } = body;
 
     if (!answers || !flow) {
@@ -37,57 +24,7 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Parameters validated:', { flow, answersCount: Object.keys(answers).length });
 
-    // Select the appropriate prompt based on flow
-    const systemPrompt = flow === 'inspire' ? inspireFlowPrompt : planningFlowPrompt;
-
-    // Format user answers into a readable string
-    const formattedAnswers = Object.entries(answers)
-      .filter(([, value]) => value && typeof value === 'string' && value.trim() !== '')
-      .map(([key, value]) => `${key}: ${value}`)
-      .join('\n');
-
-    const userMessage = `Here are the user's answers:\n\n${formattedAnswers}`;
-
-    // Call OpenAI API
-    console.log('🔑 Calling OpenAI API with key:', process.env.OPENAI_API_KEY ? 'Present' : 'Missing');
-    
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt
-        },
-        {
-          role: 'user',
-          content: userMessage
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 4000,
-    });
-
-    const tripContent = completion.choices[0]?.message?.content;
-
-    if (!tripContent) {
-      throw new Error('No content generated from OpenAI');
-    }
-
-    console.log('✅ OpenAI response received, length:', tripContent.length);
-    
-    const response = {
-      success: true,
-      tripContent
-    };
-    
-    console.log('🟢 Sending successful response');
-    return NextResponse.json(response);
-
-  } catch (error) {
-    console.error('🔴 Error generating trip:', error);
-    console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-    
-    // Fallback response for testing
+    // Temporary fallback response without OpenAI
     const fallbackContent = `🏔️ **Your Adventure Awaits!**
 
 Based on your preferences, here's a personalized trip guide:
@@ -105,14 +42,22 @@ Based on your preferences, here's a personalized trip guide:
 ✈️ **Next Steps:**
 Contact our travel experts to finalize your personalized itinerary and make your outdoor dreams a reality!
 
-*Note: Using fallback content - OpenAI API may not be configured.*`;
+*Note: Using fallback content - OpenAI API integration coming soon.*`;
 
-    const fallbackResponse = {
+    const response = {
       success: true,
       tripContent: fallbackContent
     };
     
-    console.log('🟡 Sending fallback response');
-    return NextResponse.json(fallbackResponse);
+    console.log('🟢 Sending fallback response');
+    return NextResponse.json(response);
+
+  } catch (error) {
+    console.error('🔴 Error:', error);
+    
+    return NextResponse.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
   }
 }
