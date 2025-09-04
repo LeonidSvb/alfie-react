@@ -22,6 +22,23 @@ const OutdoorableWidget: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [customInputValue, setCustomInputValue] = useState('');
 
+  // URL parameters for dynamic sizing
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const width = params.get('width');
+      const maxWidth = params.get('maxWidth');
+      
+      if (width || maxWidth) {
+        const widgetElement = document.querySelector('.alfie-embedded-chat') as HTMLElement;
+        if (widgetElement) {
+          if (width) widgetElement.style.width = width.includes('px') ? width : `${width}px`;
+          if (maxWidth) widgetElement.style.maxWidth = maxWidth.includes('px') ? maxWidth : `${maxWidth}px`;
+        }
+      }
+    }
+  }, []);
+
   // Get current questions based on flow
   useEffect(() => {
     if (state.currentFlow === 'inspire') {
