@@ -83,8 +83,22 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({ destination }) => {
     <div className="alfie-loading-content">
       {/* Alfie Avatar with Alfie styles */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <div style={{ position: 'relative' }}>
-          <div className="alfie-loading-spinner"></div>
+        <div style={{ 
+          position: 'relative', 
+          width: '80px', 
+          height: '80px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            border: '4px solid var(--alfie-dark-green)',
+            borderTop: '4px solid var(--alfie-green)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
           <img 
             src="/images/alfie-avatar.png" 
             alt="Alfie thinking" 
@@ -95,7 +109,8 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({ destination }) => {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -50%)'
+              transform: 'translate(-50%, -50%)',
+              objectFit: 'cover'
             }}
           />
         </div>
@@ -107,25 +122,20 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({ destination }) => {
         <p>Analyzing your preferences and matching with local experts...</p>
       </div>
 
-      {/* Fun fact card using Alfie message styles */}
-      <div className="alfie-message show" style={{ margin: '20px 0', position: 'static' }}>
-        <div className="alfie-avatar" style={{ minWidth: '40px' }}>
-          <img src="/images/alfie-avatar.png" alt="Alfie" style={{ width: '40px', height: '40px' }} />
-        </div>
-        <div style={{ 
-          background: 'var(--alfie-dark-green)',
-          color: 'var(--alfie-text)', 
-          padding: '15px 18px',
-          borderRadius: '18px',
-          fontSize: '13px',
-          lineHeight: '1.4',
-          fontWeight: '500',
-          flex: '1',
-          marginTop: '2px'
-        }}>
-          💡 <strong>Fun Travel Fact:</strong><br/>
-          {facts[currentFactIndex]}
-        </div>
+      {/* Fun fact card without duplicate avatar */}
+      <div style={{ 
+        background: 'var(--alfie-dark-green)',
+        color: 'var(--alfie-text)', 
+        padding: '15px 18px',
+        borderRadius: '18px',
+        fontSize: '13px',
+        lineHeight: '1.4',
+        fontWeight: '500',
+        margin: '20px 0',
+        textAlign: 'center'
+      }}>
+        💡 <strong>Fun Travel Fact:</strong><br/>
+        {facts[currentFactIndex]}
       </div>
     </div>
   );

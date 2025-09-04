@@ -73,7 +73,7 @@ function widgetReducer(state: WidgetState, action: WidgetAction): WidgetState {
     case WidgetActionType.SET_CURRENT_QUESTION:
       return {
         ...state,
-        currentQuestionIndex: action.payload
+        currentQuestionIndex: action.payload as number
       };
 
     case WidgetActionType.UPDATE_ANSWER:
@@ -81,20 +81,20 @@ function widgetReducer(state: WidgetState, action: WidgetAction): WidgetState {
         ...state,
         answers: {
           ...state.answers,
-          [action.payload.key]: action.payload.value
+          [(action.payload as any).key]: (action.payload as any).value
         }
       };
 
     case WidgetActionType.SET_LOADING:
       return {
         ...state,
-        isLoading: action.payload
+        isLoading: action.payload as boolean
       };
 
     case WidgetActionType.SET_TRIP_CONTENT:
       return {
         ...state,
-        tripContent: action.payload,
+        tripContent: action.payload as string,
         isLoading: false,
         error: null
       };
@@ -102,13 +102,13 @@ function widgetReducer(state: WidgetState, action: WidgetAction): WidgetState {
     case WidgetActionType.SET_MATCHED_EXPERTS:
       return {
         ...state,
-        matchedExperts: action.payload
+        matchedExperts: action.payload as ExpertMatch[]
       };
 
     case WidgetActionType.SET_ERROR:
       return {
         ...state,
-        error: action.payload,
+        error: action.payload as string,
         isLoading: false
       };
 
