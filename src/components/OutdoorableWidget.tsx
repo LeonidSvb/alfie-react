@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useWidget } from '@/context/WidgetContext';
 import { inspireQuestions } from '@/data/inspire-me-questions';
 import { planningQuestions } from '@/data/planning-questions';
-import { filterExperts, calculateMatchScore } from '@/utils/expertFilter';
 import { Question } from '@/types';
 import { 
   Button, 
@@ -15,7 +14,6 @@ import {
   MessageBubble 
 } from '@/components/ui';
 import LoadingAnimation from '@/components/ui/LoadingAnimation';
-import ExpertCard from '@/components/ExpertCard';
 import '@/styles/widget.css';
 
 const OutdoorableWidget: React.FC = () => {
@@ -121,6 +119,34 @@ const OutdoorableWidget: React.FC = () => {
     await generateTrip();
   };
 
+  // Quick test for dev mode
+  const handleQuickTest = async () => {
+    const mockAnswers = {
+      destination: 'Not sure yet',
+      party_type: 'Couple',
+      trip_length: '4-7 days',
+      activity_level: 'Light to moderate',
+      outdoor_interest: 'Mountains',
+      budget: 'Comfortable/mid-range'
+    };
+    
+    // Fill answers
+    Object.entries(mockAnswers).forEach(([key, value]) => {
+      updateAnswer(key, value);
+    });
+    
+    // Set flow and generate
+    if (!state.currentFlow) {
+      setFlow('inspire');
+    }
+    
+    setTimeout(() => {
+      generateTrip();
+    }, 500);
+  };
+
+  const isDev = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+
 
 
   // Render flow selection
@@ -154,6 +180,20 @@ const OutdoorableWidget: React.FC = () => {
               <span>🗺️ I know my destination — help with recs & itinerary</span>
               <span className="alfie-flow-arrow">→</span>
             </button>
+            {isDev && (
+              <button
+                className="alfie-flow-button"
+                onClick={handleQuickTest}
+                style={{ 
+                  background: 'linear-gradient(45deg, #ff6b6b, #ffa500)',
+                  border: '2px dashed #ff4757',
+                  fontSize: '14px'
+                }}
+              >
+                <span>🚀 Quick Test Enhanced Results</span>
+                <span className="alfie-flow-arrow">→</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -182,8 +222,6 @@ const OutdoorableWidget: React.FC = () => {
 
   // Render results
   if (state.tripContent) {
-    const matchedExperts = state.experts || [];
-    
     return (
       <div className="alfie-embedded-chat">
         <div className="alfie-final-results">
@@ -201,24 +239,6 @@ const OutdoorableWidget: React.FC = () => {
                 {state.tripContent}
               </div>
             </div>
-            
-            {/* Expert Recommendations */}
-            {matchedExperts.length > 0 && (
-              <div className="alfie-expert-cta">
-                <h3>Want to make this trip unforgettable?</h3>
-                <p>Connect with local experts who know these places by heart</p>
-                
-                <div style={{ display: 'grid', gap: '12px', marginTop: '16px' }}>
-                  {matchedExperts.slice(0, 3).map((expert) => (
-                    <ExpertCard
-                      key={expert.id}
-                      expert={expert}
-                      matchScore={expert.matchScore}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
             
             {/* Reset Button */}
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
