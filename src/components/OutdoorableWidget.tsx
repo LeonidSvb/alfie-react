@@ -16,6 +16,7 @@ import {
 } from '@/components/ui';
 import LoadingAnimation from '@/components/ui/LoadingAnimation';
 import ExpertCard from '@/components/ExpertCard';
+import '@/styles/widget.css';
 
 const OutdoorableWidget: React.FC = () => {
   const { 
@@ -125,31 +126,35 @@ const OutdoorableWidget: React.FC = () => {
   // Render flow selection
   if (!state.currentFlow) {
     return (
-      <div className="w-full max-w-[500px] bg-gradient-to-br from-green-50 to-emerald-50 rounded-24 p-8 font-sans shadow-card mx-auto border border-green-100">
-        <div className="flex items-start gap-5 mb-6">
-          <Avatar size="md" alt="Alfie" src="/images/alfie-avatar.png" />
-          <div className="flex-1">
-            <MessageBubble>
+      <div className="alfie-embedded-chat">
+        <div className="alfie-intro">
+          <div className="alfie-avatar-main">
+            <img src="/images/alfie-avatar.png" alt="Alfie" />
+          </div>
+          <div className="alfie-greeting">
+            <div className="alfie-greeting-bubble">
               Hi, I'm Alfie 👋 Tell me what you're dreaming up and I'll share free tailored trip ideas to inspire your next adventure.
-            </MessageBubble>
+            </div>
           </div>
         </div>
         
-        <div className="flex flex-col gap-3">
-          <Button
-            variant="flow"
-            onClick={() => handleFlowSelection('inspire')}
-            className="px-5 py-4"
-          >
-            💡 Inspire me — I'm not sure where to go yet
-          </Button>
-          <Button
-            variant="flow"
-            onClick={() => handleFlowSelection('planning')}
-            className="px-5 py-4"
-          >
-            🗺️ I know my destination — help with recs & itinerary
-          </Button>
+        <div className="alfie-flow-selection">
+          <div className="alfie-flow-buttons">
+            <button
+              className="alfie-flow-button"
+              onClick={() => handleFlowSelection('inspire')}
+            >
+              <span>💡 Inspire me — I'm not sure where to go yet</span>
+              <span className="alfie-flow-arrow">→</span>
+            </button>
+            <button
+              className="alfie-flow-button"
+              onClick={() => handleFlowSelection('planning')}
+            >
+              <span>🗺️ I know my destination — help with recs & itinerary</span>
+              <span className="alfie-flow-arrow">→</span>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -158,8 +163,17 @@ const OutdoorableWidget: React.FC = () => {
   // Render loading state
   if (state.isLoading) {
     return (
-      <div className="w-full max-w-[500px] bg-gradient-to-br from-green-50 to-emerald-50 rounded-24 p-8 font-sans shadow-card mx-auto border border-green-100">
-        <div className="text-center">
+      <div className="alfie-embedded-chat">
+        <div className="alfie-progress-container">
+          <div className="alfie-progress-text">
+            <span className="alfie-progress-emoji">🌍</span>
+            <span>Planning your adventure...</span>
+          </div>
+          <div className="alfie-progress-track">
+            <div className="alfie-progress-bar" style={{ width: '70%' }}></div>
+          </div>
+        </div>
+        <div className="alfie-loading-section">
           <LoadingAnimation destination={state.answers?.destination || ''} />
         </div>
       </div>
@@ -171,53 +185,50 @@ const OutdoorableWidget: React.FC = () => {
     const matchedExperts = state.experts || [];
     
     return (
-      <div className="w-full max-w-[500px] bg-gradient-to-br from-green-50 to-emerald-50 rounded-24 p-8 font-sans shadow-card mx-auto border border-green-100">
-        <div className="bg-alfie-dark-green rounded-18 p-6">
-          <div className="flex items-center gap-4 mb-5">
-            <Avatar size="md" alt="Alfie" src="/images/alfie-avatar.png" />
-            <h2 className="text-alfie-text text-xl font-semibold">
-              Your Custom TripGuide
-            </h2>
-          </div>
-          
-          {/* Trip Content */}
-          <div className="bg-white rounded-15 p-5 mb-5 text-sm leading-relaxed text-gray-800">
-            <div className="whitespace-pre-line">
-              {state.tripContent}
+      <div className="alfie-embedded-chat">
+        <div className="alfie-final-results">
+          <div className="alfie-results-content">
+            <div className="alfie-results-header">
+              <div className="alfie-avatar">
+                <img src="/images/alfie-avatar.png" alt="Alfie" />
+              </div>
+              <h2>Your Custom TripGuide</h2>
             </div>
-          </div>
-          
-          {/* Expert Recommendations */}
-          {matchedExperts.length > 0 && (
-            <div className="text-center p-4 bg-alfie-light-green rounded-15">
-              <h3 className="text-alfie-text text-base font-semibold mb-2">
-                Want to make this trip unforgettable?
-              </h3>
-              <p className="text-alfie-text-light text-sm mb-4">
-                Connect with local experts who know these places by heart
-              </p>
-              
-              <div className="grid gap-3 mt-4">
-                {matchedExperts.slice(0, 3).map((expert) => (
-                  <ExpertCard
-                    key={expert.id}
-                    expert={expert}
-                    matchScore={expert.matchScore}
-                  />
-                ))}
+            
+            {/* Trip Content */}
+            <div className="alfie-trip-guide">
+              <div style={{ whiteSpace: 'pre-line' }}>
+                {state.tripContent}
               </div>
             </div>
-          )}
-          
-          {/* Reset Button */}
-          <div className="text-center mt-5">
-            <Button
-              variant="secondary"
-              onClick={resetWidget}
-              size="sm"
-            >
-              Start Over
-            </Button>
+            
+            {/* Expert Recommendations */}
+            {matchedExperts.length > 0 && (
+              <div className="alfie-expert-cta">
+                <h3>Want to make this trip unforgettable?</h3>
+                <p>Connect with local experts who know these places by heart</p>
+                
+                <div style={{ display: 'grid', gap: '12px', marginTop: '16px' }}>
+                  {matchedExperts.slice(0, 3).map((expert) => (
+                    <ExpertCard
+                      key={expert.id}
+                      expert={expert}
+                      matchScore={expert.matchScore}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Reset Button */}
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+              <button
+                className="alfie-retry-button"
+                onClick={resetWidget}
+              >
+                Start Over
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -227,21 +238,19 @@ const OutdoorableWidget: React.FC = () => {
   // Render error state
   if (state.error) {
     return (
-      <div className="w-full max-w-[500px] bg-gradient-to-br from-green-50 to-emerald-50 rounded-24 p-8 font-sans shadow-card mx-auto border border-green-100">
-        <div className="text-center p-8">
-          <Avatar size="md" className="mx-auto mb-4" />
-          <h2 className="text-alfie-text text-lg font-semibold mb-2">
-            Oops! Something went wrong
-          </h2>
-          <p className="text-alfie-text-light text-sm mb-5 leading-relaxed">
-            {state.error}
-          </p>
-          <Button
-            variant="primary"
+      <div className="alfie-embedded-chat">
+        <div className="alfie-error-content">
+          <div className="alfie-avatar">
+            <img src="/images/alfie-avatar.png" alt="Alfie" />
+          </div>
+          <h2>Oops! Something went wrong</h2>
+          <p>{state.error}</p>
+          <button
+            className="alfie-retry-button"
             onClick={resetWidget}
           >
             Try Again
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -250,104 +259,113 @@ const OutdoorableWidget: React.FC = () => {
   // Render questions
   if (!currentQuestion) {
     return (
-      <div className="w-full max-w-[500px] bg-gradient-to-br from-green-50 to-emerald-50 rounded-24 p-8 font-sans shadow-card mx-auto border border-green-100">
-        <div className="text-center">
-          <p className="text-alfie-text">No questions available</p>
+      <div className="alfie-embedded-chat">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: 'var(--alfie-text)' }}>No questions available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[500px] bg-alfie-light-green rounded-20 p-8 font-sans box-border mx-auto">
+    <div className="alfie-embedded-chat">
       {/* Progress Bar */}
-      <ProgressBar 
-        progress={progress} 
-        text={`Question ${state.currentQuestionIndex + 1} of ${visibleQuestions.length}`}
-        emoji="🗣️"
-      />
-      
-      {/* Question Display */}
-      <div className="flex items-start gap-4 mb-5">
-        <Avatar size="md" alt="Alfie" src="/images/alfie-avatar.png" />
-        <MessageBubble>
-          {currentQuestion.text}
-        </MessageBubble>
+      <div className="alfie-progress-container">
+        <div className="alfie-progress-text">
+          <span className="alfie-progress-emoji">🗣️</span>
+          <span>Question {state.currentQuestionIndex + 1} of {visibleQuestions.length}</span>
+        </div>
+        <div className="alfie-progress-track">
+          <div className="alfie-progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
       </div>
       
-      {/* Answer Options */}
-      {currentQuestion.type === 'text' ? (
-        <div className="mt-4">
-          <Input
-            value={customInputValue}
-            onChange={(e) => setCustomInputValue(e.target.value)}
-            placeholder={currentQuestion.example || 'Type your answer here...'}
-            onKeyPress={(e) => e.key === 'Enter' && handleCustomInput()}
-          />
-          <Button
-            variant="primary"
-            onClick={handleCustomInput}
-            className="mt-2"
-            disabled={!customInputValue.trim()}
-          >
-            Submit
-          </Button>
+      {/* Question Display */}
+      <div className="alfie-questions-section">
+        <div className="alfie-question-display">
+          <div className="alfie-avatar">
+            <img src="/images/alfie-avatar.png" alt="Alfie" />
+          </div>
+          <div className="alfie-question-text">
+            {currentQuestion.text}
+          </div>
         </div>
-      ) : (
-        <div className={`grid ${currentQuestion.type === 'multi_select' ? 'grid-cols-2 sm:grid-cols-1' : 'grid-cols-2'} gap-3 mb-4`}>
-          {currentQuestion.options?.map((option, index) => {
-            // Check if this is an "Other" option
-            const isOtherOption = option.toLowerCase().includes('other') && option.toLowerCase().includes('free form');
-            
-            if (isOtherOption) {
-              return (
-                <div key={index} className="col-span-full">
-                  <Input
-                    value={customInputValue}
-                    onChange={(e) => setCustomInputValue(e.target.value)}
-                    placeholder="Type your own answer here..."
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && customInputValue.trim()) {
-                        handleAnswerSelect(customInputValue);
-                        setCustomInputValue('');
-                      }
-                    }}
-                    className="w-full"
-                  />
-                </div>
-              );
-            }
-            
-            return (
-              <Button
-                key={index}
-                variant={currentQuestion.type === 'multi_select' ? 'multi-option' : 'option'}
-                selected={
-                  currentQuestion.type === 'multi_select' 
-                    ? selectedOptions.includes(option)
-                    : state.answers[currentQuestion.key] === option
-                }
-                onClick={() => handleAnswerSelect(option)}
-                className="text-left justify-start"
-              >
-                {option}
-              </Button>
-            );
-          })}
-          
-          {/* Multi-select next button */}
-          {currentQuestion.type === 'multi_select' && (
-            <Button
-              variant="next"
-              onClick={handleMultiSelectNext}
-              disabled={selectedOptions.length === 0}
-              className="col-span-full mt-4"
+        
+        {/* Answer Options */}
+        {currentQuestion.type === 'text' ? (
+          <div className="alfie-custom-input">
+            <input
+              className="alfie-input"
+              value={customInputValue}
+              onChange={(e) => setCustomInputValue(e.target.value)}
+              placeholder={currentQuestion.example || 'Type your answer here...'}
+              onKeyPress={(e) => e.key === 'Enter' && handleCustomInput()}
+            />
+            <button
+              className="alfie-submit-button"
+              onClick={handleCustomInput}
+              disabled={!customInputValue.trim()}
             >
-              Continue
-            </Button>
-          )}
-        </div>
-      )}
+              Submit
+            </button>
+          </div>
+        ) : (
+          <div className="alfie-answer-options">
+            {currentQuestion.options?.map((option, index) => {
+              // Check if this is an "Other" option
+              const isOtherOption = option.toLowerCase().includes('other') && option.toLowerCase().includes('free form');
+              
+              if (isOtherOption) {
+                return (
+                  <div key={index} style={{ gridColumn: '1 / -1' }}>
+                    <input
+                      className="alfie-input"
+                      value={customInputValue}
+                      onChange={(e) => setCustomInputValue(e.target.value)}
+                      placeholder="Type your own answer here..."
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && customInputValue.trim()) {
+                          handleAnswerSelect(customInputValue);
+                          setCustomInputValue('');
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              }
+              
+              const isSelected = currentQuestion.type === 'multi_select' 
+                ? selectedOptions.includes(option)
+                : state.answers[currentQuestion.key] === option;
+              
+              return (
+                <button
+                  key={index}
+                  className={`${
+                    currentQuestion.type === 'multi_select' 
+                      ? 'alfie-multi-option-button' 
+                      : 'alfie-option-button'
+                  } ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handleAnswerSelect(option)}
+                >
+                  {option}
+                </button>
+              );
+            })}
+            
+            {/* Multi-select next button */}
+            {currentQuestion.type === 'multi_select' && (
+              <button
+                className="alfie-next-button"
+                onClick={handleMultiSelectNext}
+                disabled={selectedOptions.length === 0}
+              >
+                Continue
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

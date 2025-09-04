@@ -74,73 +74,49 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({ destination }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFactIndex((prev) => (prev + 1) % facts.length);
-    }, 5000); // Changed from 3000ms to 5000ms for slower transitions
+    }, 7000); // Slower fact transitions - 7 seconds
 
     return () => clearInterval(interval);
   }, [facts.length]);
 
   return (
-    <div className="text-center py-6 px-4">
-      {/* Alfie Avatar with animation */}
-      <div className="flex justify-center mb-4">
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full animate-ping opacity-20"></div>
+    <div className="alfie-loading-content">
+      {/* Alfie Avatar with Alfie styles */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <div style={{ position: 'relative' }}>
+          <div className="alfie-loading-spinner"></div>
           <img 
             src="/images/alfie-avatar.png" 
             alt="Alfie thinking" 
-            className="w-20 h-20 rounded-full ring-4 ring-emerald-200 shadow-lg relative z-10"
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
           />
         </div>
       </div>
 
-      {/* Loading text with better animation */}
-      <div className="mb-6">
-        <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent mb-2">
-          Alfie is crafting your perfect adventure
-        </h3>
-        <div className="flex justify-center gap-1">
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-        </div>
+      {/* Loading text using Alfie styles */}
+      <div className="alfie-loading-text">
+        <h3>Alfie is crafting your perfect adventure</h3>
+        <p>Analyzing your preferences and matching with local experts...</p>
       </div>
 
-      {/* Fun fact card with better design */}
-      <div className="relative mb-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-20 transform rotate-1"></div>
-        <div className="relative bg-white rounded-20 p-5 border-2 border-orange-200 shadow-lg transform -rotate-1 hover:rotate-0 transition-transform">
-          <div className="flex items-start gap-2">
-            <span className="text-2xl">💡</span>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-orange-600 mb-1">Fun Travel Fact:</p>
-              <p className="text-gray-700 text-sm font-medium leading-relaxed">
-                {facts[currentFactIndex]}
-              </p>
-            </div>
-          </div>
+      {/* Fun fact card using Alfie message styles */}
+      <div className="alfie-message show" style={{ margin: '20px 0', position: 'static' }}>
+        <div className="alfie-avatar" style={{ minWidth: '40px' }}>
+          <img src="/images/alfie-avatar.png" alt="Alfie" style={{ width: '40px', height: '40px' }} />
+        </div>
+        <div className="alfie-comment" style={{ fontSize: '13px' }}>
+          💡 <strong>Fun Travel Fact:</strong><br/>
+          {facts[currentFactIndex]}
         </div>
       </div>
-
-      {/* Animated progress bar */}
-      <div className="relative">
-        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-400 rounded-full relative overflow-hidden"
-               style={{ width: '70%' }}>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
-          </div>
-        </div>
-        <p className="text-xs text-gray-500 mt-1">Analyzing preferences...</p>
-      </div>
-
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
     </div>
   );
 };
