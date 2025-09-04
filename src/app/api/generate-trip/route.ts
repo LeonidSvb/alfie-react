@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔵 API called');
+    console.log('🔵 API called - VERSION 2 WITH FALLBACK');
     
     // SAFE JSON PARSING with error handling
     let body;
