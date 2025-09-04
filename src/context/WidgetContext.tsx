@@ -1,5 +1,16 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { WidgetState, UserAnswers, Expert, Question } from '@/types';
+import { UserAnswers, FlowType, ExpertMatch } from '@/types';
+
+// Define the actual widget state interface used in context
+interface WidgetState {
+  currentFlow: FlowType | null;
+  currentQuestionIndex: number;
+  answers: UserAnswers;
+  isLoading: boolean;
+  tripContent: string | null;
+  matchedExperts: ExpertMatch[];
+  error: string | null;
+}
 
 // Action types
 export enum WidgetActionType {
@@ -18,7 +29,7 @@ export enum WidgetActionType {
 // Action interfaces
 export interface WidgetAction {
   type: WidgetActionType;
-  payload?: any;
+  payload?: unknown;
 }
 
 // Context interface
@@ -29,7 +40,7 @@ interface WidgetContextType {
   updateAnswer: (key: string, value: string) => void;
   nextQuestion: () => void;
   previousQuestion: () => void;
-  setFlow: (flow: 'inspire' | 'planning') => void;
+  setFlow: (flow: FlowType) => void;
   generateTrip: () => Promise<void>;
   resetWidget: () => void;
 }
@@ -51,7 +62,7 @@ function widgetReducer(state: WidgetState, action: WidgetAction): WidgetState {
     case WidgetActionType.SET_FLOW:
       return {
         ...state,
-        currentFlow: action.payload,
+        currentFlow: action.payload as FlowType,
         currentQuestionIndex: 0,
         answers: {},
         tripContent: null,

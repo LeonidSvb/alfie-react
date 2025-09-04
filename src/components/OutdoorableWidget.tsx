@@ -5,14 +5,7 @@ import { useWidget } from '@/context/WidgetContext';
 import { inspireQuestions } from '@/data/inspire-me-questions';
 import { planningQuestions } from '@/data/planning-questions';
 import { Question } from '@/types';
-import { 
-  Button, 
-  Input, 
-  ProgressBar, 
-  Avatar, 
-  LoadingSpinner, 
-  MessageBubble 
-} from '@/components/ui';
+// Removed unused UI imports for cleaner code
 import LoadingAnimation from '@/components/ui/LoadingAnimation';
 import '@/styles/widget.css';
 
@@ -21,7 +14,7 @@ const OutdoorableWidget: React.FC = () => {
     state, 
     updateAnswer, 
     nextQuestion, 
-    previousQuestion, 
+    // previousQuestion, // Unused in current implementation
     setFlow, 
     generateTrip, 
     resetWidget 
@@ -106,6 +99,16 @@ const OutdoorableWidget: React.FC = () => {
 
   // Handle multi-select next
   const handleMultiSelectNext = () => {
+    if (!currentQuestion) return;
+
+    // If user typed custom input, save it
+    if (customInputValue.trim()) {
+      const finalAnswer = selectedOptions.length > 0 
+        ? [...selectedOptions, customInputValue].join(', ')
+        : customInputValue;
+      updateAnswer(currentQuestion.key, finalAnswer);
+    }
+
     if (state.currentQuestionIndex < visibleQuestions.length - 1) {
       nextQuestion();
       setSelectedOptions([]);
@@ -160,7 +163,7 @@ const OutdoorableWidget: React.FC = () => {
           </div>
           <div className="alfie-greeting">
             <div className="alfie-greeting-bubble">
-              Hi, I'm Alfie 👋 Tell me what you're dreaming up and I'll share free tailored trip ideas to inspire your next adventure.
+              Hi, I&apos;m Alfie 👋 Tell me what you&apos;re dreaming up and I&apos;ll share free tailored trip ideas to inspire your next adventure.
             </div>
           </div>
         </div>
@@ -171,7 +174,7 @@ const OutdoorableWidget: React.FC = () => {
               className="alfie-flow-button"
               onClick={() => handleFlowSelection('inspire')}
             >
-              <span>💡 Inspire me — I'm not sure where to go yet</span>
+              <span>💡 Inspire me — I&apos;m not sure where to go yet</span>
               <span className="alfie-flow-arrow">→</span>
             </button>
             <button
@@ -215,7 +218,7 @@ const OutdoorableWidget: React.FC = () => {
           </div>
         </div>
         <div className="alfie-loading-section">
-          <LoadingAnimation destination={state.answers?.destination || ''} />
+          <LoadingAnimation destination={Array.isArray(state.answers?.destination) ? state.answers.destination[0] : state.answers?.destination || ''} />
         </div>
       </div>
     );
@@ -228,11 +231,14 @@ const OutdoorableWidget: React.FC = () => {
         <div className="alfie-final-results">
           <div className="alfie-results-content">
             <div className="alfie-results-header">
+              <div className="alfie-avatar">
+                <img src="/images/alfie-avatar.png" alt="Alfie" />
+              </div>
               <h2>Your Custom TripGuide</h2>
             </div>
             
             {/* Trip Content */}
-            <div className="alfie-trip-guide">
+            <div className="alfie-trip-guide" style={{ maxHeight: '500px', overflowY: 'auto' }}>
               <div style={{ whiteSpace: 'pre-line' }}>
                 {state.tripContent}
               </div>
@@ -378,7 +384,7 @@ const OutdoorableWidget: React.FC = () => {
               <button
                 className="alfie-next-button"
                 onClick={handleMultiSelectNext}
-                disabled={selectedOptions.length === 0}
+                disabled={selectedOptions.length === 0 && !customInputValue.trim()}
               >
                 Continue
               </button>
