@@ -11,7 +11,7 @@
 /* Main Widget Container */
 .alfie-embedded-chat {
     width: 100%;
-    max-width: 500px;
+    max-width: 800px;
     background: var(--alfie-light-green);
     border-radius: 20px;
     padding: 30px;
