@@ -13,6 +13,13 @@ interface TripGenerationRequest {
   flow: 'inspire' | 'planning';
 }
 
+export async function GET() {
+  return NextResponse.json({ 
+    status: 'generate-trip API is working',
+    method: 'GET'
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🔵 API called');
