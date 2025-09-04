@@ -334,26 +334,26 @@
 
         const presets = {
             utah: {
-                destination: 'Utah National Parks',
-                activities: 'Hiking, Canyoneering',
+                destination: 'Utah National Parks (Zion, Bryce)',
+                activities: 'Hiking, Canyoneering, Photography',
                 travelerType: 'Solo',
                 experienceLevel: 'Moderate'
             },
             extreme: {
-                destination: 'Patagonia',
-                activities: 'Backpacking, Mountaineering',
+                destination: 'Patagonia, Argentina',
+                activities: 'Backpacking, Mountaineering, Extreme hiking',
                 travelerType: 'Solo',
                 experienceLevel: 'Extreme'
             },
             family: {
-                destination: 'Yellowstone',
-                activities: 'Wildlife viewing, Easy hikes',
+                destination: 'Grand Canyon National Park',
+                activities: 'Wildlife viewing, Easy hikes, Photography',
                 travelerType: 'Family',
                 experienceLevel: 'Beginner'
             },
             europe: {
-                destination: 'Italian Dolomites',
-                activities: 'Hiking, Cultural tours',
+                destination: 'European Alps, Italy',
+                activities: 'Hiking, Cultural tours, Wine tasting',
                 travelerType: 'Couple',
                 experienceLevel: 'Moderate'
             }
@@ -388,7 +388,24 @@
             return data.records || [];
         }
 
+        function getExpertAvatar(expert) {
+            const name = expert.name.toLowerCase();
+            // Avatar mapping based on expert specialties
+            if (name.includes('lura') || expert.matchedTags.some(tag => tag.includes('Utah'))) return '🏜️';
+            if (name.includes('owen') || expert.matchedTags.some(tag => tag.includes('Extreme'))) return '🥾'; 
+            if (name.includes('dino') || expert.matchedTags.some(tag => tag.includes('Europe'))) return '🇪🇺';
+            if (name.includes('marcy') || expert.matchedTags.some(tag => tag.includes('Family'))) return '👥';
+            if (expert.matchedTags.some(tag => tag.includes('Grand Canyon'))) return '🏞️';
+            if (expert.matchedTags.some(tag => tag.includes('Photography'))) return '📸';
+            if (expert.matchedTags.some(tag => tag.includes('Water'))) return '🌊';
+            if (expert.matchedTags.some(tag => tag.includes('Mountain'))) return '⛰️';
+            // Default based on first letter
+            return expert.name.charAt(0);
+        }
+
         function matchExpert(formData, experts) {
+            const allMatches = [];
+
             for (const record of experts) {
                 const fields = record.fields;
                 if (!fields.Name || !fields.Email) continue;
@@ -397,7 +414,7 @@
                 let matchScore = 0;
                 const matchedTags = [];
 
-                // Check destination matches
+                // Destination matching (more comprehensive)
                 const dest = formData.destination.toLowerCase();
                 if (dest.includes('utah') && expertTags.includes('region_utah')) {
                     matchScore += 40;
@@ -407,45 +424,90 @@
                     matchScore += 40;
                     matchedTags.push('Grand Canyon');
                 }
-                if (dest.includes('europe') && expertTags.some(tag => tag.startsWith('country_'))) {
+                if (dest.includes('arizona') && expertTags.includes('region_arizona')) {
+                    matchScore += 35;
+                    matchedTags.push('Arizona Expert');
+                }
+                if ((dest.includes('europe') || dest.includes('italy') || dest.includes('dolomites')) && 
+                    expertTags.some(tag => tag.startsWith('country_'))) {
                     matchScore += 30;
-                    matchedTags.push('Europe');
+                    matchedTags.push('Europe Specialist');
+                }
+                if (dest.includes('patagonia') && expertTags.includes('dest_patagonia')) {
+                    matchScore += 45;
+                    matchedTags.push('Patagonia Expert');
+                }
+                if ((dest.includes('yellowstone') || dest.includes('national park')) && expertTags.includes('dest_yellowstone')) {
+                    matchScore += 35;
+                    matchedTags.push('National Parks');
                 }
 
-                // Check activity matches
+                // Activity matching (expanded)
                 const activities = formData.activities.toLowerCase();
                 if (activities.includes('hiking') && expertTags.includes('activity_hiking')) {
                     matchScore += 25;
-                    matchedTags.push('Hiking');
+                    matchedTags.push('Hiking Specialist');
+                }
+                if (activities.includes('backpacking') && expertTags.includes('spec_backcountry')) {
+                    matchScore += 30;
+                    matchedTags.push('Backcountry Expert');
                 }
                 if (activities.includes('photography') && expertTags.includes('activity_photography')) {
                     matchScore += 20;
-                    matchedTags.push('Photography');
+                    matchedTags.push('Photography Guide');
+                }
+                if (activities.includes('mountaineering') && expertTags.includes('activity_mountaineering')) {
+                    matchScore += 35;
+                    matchedTags.push('Mountaineering');
+                }
+                if (activities.includes('canyoneering') && expertTags.includes('activity_canyoning')) {
+                    matchScore += 30;
+                    matchedTags.push('Canyoneering');
                 }
 
-                // Check experience level
-                if (formData.experienceLevel.toLowerCase() === 'extreme' && expertTags.includes('level_extreme')) {
-                    matchScore += 30;
-                    matchedTags.push('Extreme Level');
+                // Experience level matching
+                const level = formData.experienceLevel.toLowerCase();
+                if (level === 'extreme' && expertTags.includes('level_extreme')) {
+                    matchScore += 35;
+                    matchedTags.push('Extreme Adventures');
                 }
-                if (formData.experienceLevel.toLowerCase() === 'beginner' && expertTags.includes('traveler_beginners')) {
-                    matchScore += 25;
+                if (level === 'beginner' && expertTags.includes('traveler_beginners')) {
+                    matchScore += 30;
                     matchedTags.push('Beginner Friendly');
                 }
+                if ((level === 'moderate' || level === 'advanced') && expertTags.includes('level_advanced')) {
+                    matchScore += 25;
+                    matchedTags.push('Advanced Guide');
+                }
 
-                // Check traveler type
-                if (formData.travelerType.toLowerCase() === 'solo' && expertTags.includes('traveler_solo')) {
-                    matchScore += 15;
+                // Traveler type matching
+                const travelerType = formData.travelerType.toLowerCase();
+                if (travelerType === 'solo' && expertTags.includes('traveler_solo')) {
+                    matchScore += 20;
                     matchedTags.push('Solo Travel');
                 }
-                if (formData.travelerType.toLowerCase() === 'family' && expertTags.includes('traveler_families')) {
+                if (travelerType === 'family' && expertTags.includes('traveler_families')) {
+                    matchScore += 20;
+                    matchedTags.push('Family Adventures');
+                }
+                if (travelerType === 'couple' && (expertTags.includes('traveler_solo') || expertTags.includes('role_guide'))) {
                     matchScore += 15;
-                    matchedTags.push('Family Friendly');
+                    matchedTags.push('Couples Travel');
                 }
 
-                // Return expert if we have a good match
-                if (matchScore >= 20) {
-                    return {
+                // Professional credentials bonus
+                if (expertTags.includes('cert_wfr')) {
+                    matchScore += 10;
+                    matchedTags.push('Wilderness First Aid');
+                }
+                if (expertTags.includes('role_guide')) {
+                    matchScore += 15;
+                    matchedTags.push('Professional Guide');
+                }
+
+                // Add to matches if score > 10
+                if (matchScore > 10) {
+                    allMatches.push({
                         id: record.id,
                         name: fields.Name,
                         profession: fields.Profession || 'Travel Expert',
@@ -454,22 +516,31 @@
                         profileUrl: fields.Profile_URL || '#',
                         matchScore: Math.min(matchScore, 100),
                         matchedTags: matchedTags
-                    };
+                    });
                 }
             }
 
-            // Fallback to first available expert
-            const firstExpert = experts.find(r => r.fields.Name && r.fields.Email);
-            if (firstExpert) {
-                const fields = firstExpert.fields;
+            // Sort by match score and return best match
+            allMatches.sort((a, b) => b.matchScore - a.matchScore);
+            
+            if (allMatches.length > 0) {
+                console.log(`🎯 Found ${allMatches.length} potential matches`);
+                console.log(`🏆 Best match: ${allMatches[0].name} (${allMatches[0].matchScore}%)`);
+                return allMatches[0];
+            }
+
+            // Fallback to any available expert
+            const fallbackExpert = experts.find(r => r.fields.Name && r.fields.Email);
+            if (fallbackExpert) {
+                const fields = fallbackExpert.fields;
                 return {
-                    id: firstExpert.id,
+                    id: fallbackExpert.id,
                     name: fields.Name,
                     profession: fields.Profession || 'Travel Expert',
                     email: fields.Email,
                     shortBio: fields.Short_Bio || 'Experienced outdoor guide.',
                     profileUrl: fields.Profile_URL || '#',
-                    matchScore: 60,
+                    matchScore: 50,
                     matchedTags: ['General Expert']
                 };
             }
@@ -478,11 +549,12 @@
         }
 
         function displayExpert(expert) {
+            const avatar = getExpertAvatar(expert);
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `
                 <div class="expert-card">
                     <div class="expert-header">
-                        <div class="expert-avatar">${expert.name.charAt(0)}</div>
+                        <div class="expert-avatar">${avatar}</div>
                         <div class="expert-info">
                             <h3>${expert.name}</h3>
                             <p class="expert-profession">${expert.profession}</p>
