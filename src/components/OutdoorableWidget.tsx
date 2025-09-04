@@ -5,7 +5,6 @@ import { useWidget } from '@/context/WidgetContext';
 import { inspireQuestions } from '@/data/inspire-me-questions';
 import { planningQuestions } from '@/data/planning-questions';
 import { Question } from '@/types';
-// Removed unused UI imports for cleaner code
 import LoadingAnimation from '@/components/ui/LoadingAnimation';
 import '@/styles/widget.css';
 
@@ -14,7 +13,6 @@ const OutdoorableWidget: React.FC = () => {
     state, 
     updateAnswer, 
     nextQuestion, 
-    // previousQuestion, // Unused in current implementation
     setFlow, 
     generateTrip, 
     resetWidget 
@@ -112,46 +110,16 @@ const OutdoorableWidget: React.FC = () => {
     if (state.currentQuestionIndex < visibleQuestions.length - 1) {
       nextQuestion();
       setSelectedOptions([]);
-      setCustomInputValue(''); // Clear custom input when moving to next question
+      setCustomInputValue('');
     } else {
       handleGenerateTrip();
     }
   };
 
-  // Generate trip and match experts
+  // Generate trip
   const handleGenerateTrip = async () => {
     await generateTrip();
   };
-
-  // Quick test for dev mode
-  const handleQuickTest = async () => {
-    const mockAnswers = {
-      destination: 'Not sure yet',
-      party_type: 'Couple',
-      trip_length: '4-7 days',
-      activity_level: 'Light to moderate',
-      outdoor_interest: 'Mountains',
-      budget: 'Comfortable/mid-range'
-    };
-    
-    // Fill answers
-    Object.entries(mockAnswers).forEach(([key, value]) => {
-      updateAnswer(key, value);
-    });
-    
-    // Set flow and generate
-    if (!state.currentFlow) {
-      setFlow('inspire');
-    }
-    
-    setTimeout(() => {
-      generateTrip();
-    }, 500);
-  };
-
-  const isDev = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
-
-
 
   // Render flow selection
   if (!state.currentFlow) {
@@ -184,20 +152,6 @@ const OutdoorableWidget: React.FC = () => {
               <span>🗺️ I know my destination — help with recs & itinerary</span>
               <span className="alfie-flow-arrow">→</span>
             </button>
-            {isDev && (
-              <button
-                className="alfie-flow-button"
-                onClick={handleQuickTest}
-                style={{ 
-                  background: 'linear-gradient(45deg, #ff6b6b, #ffa500)',
-                  border: '2px dashed #ff4757',
-                  fontSize: '14px'
-                }}
-              >
-                <span>🚀 Quick Test Enhanced Results</span>
-                <span className="alfie-flow-arrow">→</span>
-              </button>
-            )}
           </div>
         </div>
       </div>

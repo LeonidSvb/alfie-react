@@ -6,6 +6,13 @@
     --alfie-orange: #FF8C42;
     --alfie-text: #2E4B3E;
     --alfie-text-light: #4A6741;
+    
+    /* Enhanced Results Variables */
+    --alfie-enhanced-highlight-bg: #FEF3C7;
+    --alfie-enhanced-highlight-text: #92400E;
+    --alfie-enhanced-nav-bg: rgba(232, 245, 232, 0.95);
+    --alfie-enhanced-border: #D1D5DB;
+    --alfie-enhanced-hover: #F3F4F6;
 }
 
 /* Main Widget Container */
@@ -540,5 +547,289 @@
     .alfie-embedded-chat {
         max-width: 300px;
         padding: 15px;
+    }
+}
+
+/* ============================================
+   ENHANCED TRIP RESULTS STYLES (ISOLATED)
+   ============================================ */
+
+/* Enhanced Container */
+.alfie-enhanced-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Enhanced Content */
+.alfie-enhanced-content {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 0;
+    background: white;
+    border-radius: 15px;
+}
+
+/* Sticky Navigation */
+.alfie-enhanced-nav {
+    position: sticky;
+    top: 0;
+    background: var(--alfie-enhanced-nav-bg);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--alfie-enhanced-border);
+    padding: 8px 12px;
+    border-radius: 15px 15px 0 0;
+    z-index: 10;
+}
+
+.alfie-enhanced-nav-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.alfie-enhanced-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    border: 1px solid var(--alfie-enhanced-border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--alfie-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-family: inherit;
+    font-weight: 500;
+}
+
+.alfie-enhanced-nav-item:hover {
+    background: var(--alfie-enhanced-hover);
+    transform: translateY(-1px);
+}
+
+.alfie-enhanced-nav-item.active {
+    background: var(--alfie-green);
+    color: white;
+    border-color: var(--alfie-green);
+}
+
+.alfie-enhanced-nav-emoji {
+    font-size: 14px;
+}
+
+.alfie-enhanced-nav-title {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alfie-enhanced-nav-number {
+    background: rgba(0, 0, 0, 0.1);
+    color: inherit;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.alfie-enhanced-nav-item.active .alfie-enhanced-nav-number {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced Sections */
+.alfie-enhanced-sections {
+    padding: 20px;
+}
+
+.alfie-enhanced-section {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #F3F4F6;
+    padding-bottom: 20px;
+}
+
+.alfie-enhanced-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.alfie-enhanced-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.alfie-enhanced-section-header:hover {
+    background: var(--alfie-enhanced-hover);
+}
+
+.alfie-enhanced-section-emoji {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.alfie-enhanced-section-title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--alfie-text);
+    margin: 0;
+}
+
+.alfie-enhanced-collapse-btn {
+    background: none;
+    border: none;
+    color: var(--alfie-text-light);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.alfie-enhanced-collapse-btn:hover {
+    background: var(--alfie-enhanced-hover);
+    color: var(--alfie-text);
+}
+
+.alfie-enhanced-section-content {
+    padding-left: 28px;
+    line-height: 1.6;
+}
+
+.alfie-enhanced-section-content p {
+    margin: 8px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Highlighting Styles */
+.alfie-enhanced-highlight-price {
+    background: var(--alfie-enhanced-highlight-bg);
+    color: var(--alfie-enhanced-highlight-text);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.alfie-enhanced-highlight-date,
+.alfie-enhanced-highlight-time {
+    background: #EEF2FF;
+    color: #4338CA;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+.alfie-enhanced-highlight-emoji {
+    font-size: 1.1em;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+/* Typing Animation */
+.alfie-enhanced-typing {
+    padding: 20px;
+}
+
+.alfie-enhanced-typing-content {
+    line-height: 1.6;
+}
+
+.alfie-enhanced-typing-content p {
+    margin: 8px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+.alfie-enhanced-typing-cursor {
+    display: inline-block;
+    background: var(--alfie-green);
+    color: var(--alfie-green);
+    width: 2px;
+    animation: alfie-enhanced-blink 1s infinite;
+    margin-left: 2px;
+}
+
+@keyframes alfie-enhanced-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Test Mode Indicator */
+.alfie-enhanced-test-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 20;
+}
+
+/* Mobile Responsive for Enhanced Results */
+@media (max-width: 480px) {
+    .alfie-enhanced-nav-container {
+        gap: 4px;
+    }
+    
+    .alfie-enhanced-nav-item {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    
+    .alfie-enhanced-nav-title {
+        max-width: 60px;
+    }
+    
+    .alfie-enhanced-sections {
+        padding: 15px;
+    }
+    
+    .alfie-enhanced-section-content {
+        padding-left: 20px;
+    }
+    
+    .alfie-enhanced-typing {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .alfie-enhanced-nav {
+        padding: 6px 8px;
+    }
+    
+    .alfie-enhanced-nav-item {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+    
+    .alfie-enhanced-nav-title {
+        max-width: 50px;
+    }
+    
+    .alfie-enhanced-sections {
+        padding: 12px;
     }
 }

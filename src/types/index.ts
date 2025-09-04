@@ -157,6 +157,43 @@ export const DEFAULT_THEME = {
   textColorLight: '#4A6741',
 };
 
+// Enhanced Results Types (новые)
+export interface EnhancedTripSection {
+  id: string;
+  title: string;
+  content: string;
+  emoji: string;
+}
+
+export interface EnhancedResultsProps {
+  content: string;
+  className?: string;
+  enableAnimations?: boolean;
+  testMode?: boolean;
+}
+
+export interface TripNavigationItem {
+  id: string;
+  title: string;
+  emoji: string;
+}
+
+export interface TripNavigationProps {
+  sections: TripNavigationItem[];
+  activeSection: string;
+  onSectionClick: (sectionId: string) => void;
+  className?: string;
+}
+
+export interface TypingAnimationProps {
+  content: string;
+  onComplete?: () => void;
+  onSectionComplete?: (sectionId: string) => void;
+  sections?: EnhancedTripSection[];
+  speed?: number;
+  className?: string;
+}
+
 // Утилитарные типы
 export type Nullable<T> = T | null;
 export type Optional<T> = T | undefined;
