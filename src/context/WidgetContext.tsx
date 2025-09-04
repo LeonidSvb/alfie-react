@@ -81,7 +81,7 @@ function widgetReducer(state: WidgetState, action: WidgetAction): WidgetState {
         ...state,
         answers: {
           ...state.answers,
-          [(action.payload as any).key]: (action.payload as any).value
+          [(action.payload as { key: string; value: string }).key]: (action.payload as { key: string; value: string }).value
         }
       };
 

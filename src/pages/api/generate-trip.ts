@@ -45,7 +45,7 @@ export default async function handler(
 
     // Format user answers into a readable string
     const formattedAnswers = Object.entries(answers)
-      .filter(([, value]) => value && value.trim() !== '')
+      .filter(([, value]) => value && typeof value === 'string' && value.trim() !== '')
       .map(([key, value]) => `${key}: ${value}`)
       .join('\n');
 
