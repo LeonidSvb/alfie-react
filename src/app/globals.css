@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/* CSS Variables for Alfie theming */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Alfie Brand Colors */
+  --alfie-green: #4A8B5C;
+  --alfie-light-green: #E8F5E8;
+  --alfie-dark-green: #D4EDD4;
+  --alfie-orange: #FF8C42;
+  --alfie-text: #2E4B3E;
+  --alfie-text-light: #4A6741;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Alfie Custom Colors */
+  --color-alfie-green: var(--alfie-green);
+  --color-alfie-light-green: var(--alfie-light-green);
+  --color-alfie-dark-green: var(--alfie-dark-green);
+  --color-alfie-orange: var(--alfie-orange);
+  --color-alfie-text: var(--alfie-text);
+  --color-alfie-text-light: var(--alfie-text-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alfie-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--alfie-dark-green);
+  border-top: 4px solid var(--alfie-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Progress bar gradient effect */
+.alfie-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+  border-radius: 20px;
+}

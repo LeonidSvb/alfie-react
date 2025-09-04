@@ -1,0 +1,22 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="30" cy="30" r="30" fill="#FF8C42"/>
+<!-- Fox face -->
+<ellipse cx="30" cy="28" rx="16" ry="14" fill="#D2691E"/>
+<!-- Fox ears -->
+<path d="M18 20 L20 12 L26 18 Z" fill="#D2691E"/>
+<path d="M42 20 L40 12 L34 18 Z" fill="#D2691E"/>
+<path d="M20 16 L22 13 L24 17 Z" fill="#8B4513"/>
+<path d="M40 16 L38 13 L36 17 Z" fill="#8B4513"/>
+<!-- Fox snout -->
+<ellipse cx="30" cy="32" rx="4" ry="3" fill="#F4A460"/>
+<!-- Fox nose -->
+<circle cx="30" cy="30" r="1.5" fill="#000"/>
+<!-- Fox eyes -->
+<circle cx="26" cy="26" r="2" fill="#000"/>
+<circle cx="34" cy="26" r="2" fill="#000"/>
+<circle cx="26.5" cy="25.5" r="0.5" fill="#FFF"/>
+<circle cx="34.5" cy="25.5" r="0.5" fill="#FFF"/>
+<!-- Adventure hat -->
+<path d="M15 22 Q30 15 45 22 L42 18 Q30 12 18 18 Z" fill="#4A8B5C"/>
+<circle cx="30" cy="18" r="2" fill="#228B22"/>
+</svg>
