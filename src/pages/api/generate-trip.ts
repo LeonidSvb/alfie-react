@@ -31,14 +31,19 @@ export default async function handler(
   }
 
   try {
+    console.log('🔵 API called with body:', JSON.stringify(req.body, null, 2));
+    
     const { answers, flow }: TripGenerationRequest = req.body;
 
     if (!answers || !flow) {
+      console.error('❌ Missing required parameters');
       return res.status(400).json({
         success: false,
         error: 'Missing required parameters: answers and flow'
       });
     }
+
+    console.log('✅ Parameters validated:', { flow, answersCount: Object.keys(answers).length });
 
     // Select the appropriate prompt based on flow
     const systemPrompt = flow === 'inspire' ? inspireFlowPrompt : planningFlowPrompt;
@@ -76,13 +81,19 @@ export default async function handler(
       throw new Error('No content generated from OpenAI');
     }
 
-    return res.status(200).json({
+    console.log('✅ OpenAI response received, length:', tripContent.length);
+    
+    const response = {
       success: true,
       tripContent
-    });
+    };
+    
+    console.log('🟢 Sending successful response');
+    return res.status(200).json(response);
 
   } catch (error) {
-    console.error('Error generating trip:', error);
+    console.error('🔴 Error generating trip:', error);
+    console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
     // Fallback response for testing
     const fallbackContent = `🏔️ **Your Adventure Awaits!**
@@ -102,11 +113,14 @@ Based on your preferences, here's a personalized trip guide:
 ✈️ **Next Steps:**
 Contact our travel experts to finalize your personalized itinerary and make your outdoor dreams a reality!
 
-*Note: Please configure OpenAI API key in Vercel dashboard for full AI-powered responses.*`;
+*Note: Using fallback content - OpenAI API may not be configured.*`;
 
-    return res.status(200).json({
+    const fallbackResponse = {
       success: true,
       tripContent: fallbackContent
-    });
+    };
+    
+    console.log('🟡 Sending fallback response');
+    return res.status(200).json(fallbackResponse);
   }
 }

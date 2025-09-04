@@ -178,6 +178,10 @@ export function WidgetProvider({ children }: WidgetProviderProps) {
     dispatch({ type: WidgetActionType.SET_LOADING, payload: true });
 
     try {
+      console.log('🔵 Starting trip generation...');
+      console.log('🔵 Flow:', state.currentFlow);
+      console.log('🔵 Answers:', state.answers);
+      
       // Step 1: Generate trip content
       const tripResponse = await fetch('/api/generate-trip', {
         method: 'POST',
@@ -190,7 +194,23 @@ export function WidgetProvider({ children }: WidgetProviderProps) {
         }),
       });
 
-      const tripData = await tripResponse.json();
+      console.log('🔵 Response status:', tripResponse.status);
+      console.log('🔵 Response headers:', Object.fromEntries(tripResponse.headers.entries()));
+      
+      if (!tripResponse.ok) {
+        throw new Error(`HTTP error! status: ${tripResponse.status}`);
+      }
+
+      const responseText = await tripResponse.text();
+      console.log('🔵 Raw response:', responseText.substring(0, 500) + '...');
+      
+      let tripData;
+      try {
+        tripData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('🔴 JSON parse error:', parseError);
+        throw new Error(`Invalid JSON response: ${parseError instanceof Error ? parseError.message : 'Unknown parse error'}`);
+      }
 
       if (!tripData.success) {
         throw new Error(tripData.error || 'Failed to generate trip');
@@ -211,6 +231,7 @@ export function WidgetProvider({ children }: WidgetProviderProps) {
       console.log('✅ Trip generation completed successfully');
 
     } catch (error) {
+      console.error('🔴 Trip generation error:', error);
       dispatch({
         type: WidgetActionType.SET_ERROR,
         payload: error instanceof Error ? error.message : 'Unknown error occurred'
