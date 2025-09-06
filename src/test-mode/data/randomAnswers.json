@@ -1,0 +1,322 @@
+{
+  "inspire-me": {
+    "home_base": [
+      "San Francisco", "New York", "London", "Paris", "Chicago", "Los Angeles",
+      "Berlin", "Toronto", "Sydney", "Amsterdam"
+    ],
+    "travel_radius": [
+      "Within driving distance",
+      "Short flight (2–4 hrs)", 
+      "Medium flight (5–8 hrs)",
+      "Long haul — anywhere goes"
+    ],
+    "regions_interest": [
+      ["Europe"],
+      ["Asia"],
+      ["Africa"],
+      ["Latin America (incl. Mexico / Central America)"],
+      ["North America (US/Canada)"],
+      ["Oceania"],
+      ["Europe", "Asia"],
+      ["Europe", "North America (US/Canada)"],
+      ["Asia", "Oceania"]
+    ],
+    "specific_regions": [
+      "Iceland, Norway, Switzerland",
+      "Japan, South Korea, Thailand", 
+      "Morocco, Egypt, South Africa",
+      "Costa Rica, Peru, Chile",
+      "National Parks in Utah, Colorado",
+      "New Zealand, Australia",
+      "Portugal, Spain, France",
+      "Indonesia, Vietnam, Philippines",
+      "Kenya, Tanzania, Botswana",
+      "Argentina, Brazil, Ecuador"
+    ],
+    "terrain_prefs": [
+      ["Mountains"],
+      ["Coastlines / Islands"],
+      ["Desert"],
+      ["Forests / Jungles"],
+      ["Winter / Snow"],
+      ["Mountains", "Coastlines / Islands"],
+      ["Desert", "Mountains"],
+      ["Forests / Jungles", "Coastlines / Islands"]
+    ],
+    "setting_pref": [
+      "Off the grid / remote",
+      "Mix of both",
+      "Near civilization / accessible"
+    ],
+    "trip_structure": [
+      "Single destination (one home base, can include day trips)",
+      "Multi-destination (changing locations/lodging)",
+      "Road trip / overland journey"
+    ],
+    "budget_style": [
+      "💰 Budget / Backpacker",
+      "✨ Comfortable / Mid-range", 
+      "💎 Luxury / Premium"
+    ],
+    "season_window": [
+      "Spring (Mar–May)",
+      "Summer (Jun–Aug)",
+      "Fall (Sep–Nov)",
+      "Winter (Dec–Feb)",
+      "Flexible / Any season"
+    ],
+    "trip_length_days": [
+      "Weekend (2-3 days)",
+      "1 week",
+      "2 weeks+",
+      "1 month+"
+    ],
+    "lodging_style": [
+      ["Hotels / Resorts"],
+      ["Boutique / Guesthouse"],
+      ["B&B / Farm stay"],
+      ["Camping / Glamping"],
+      ["Hostels / Budget"],
+      ["Hotels / Resorts", "Boutique / Guesthouse"],
+      ["B&B / Farm stay", "Camping / Glamping"]
+    ],
+    "transport_pref": [
+      "🚗 Rental car / self-drive",
+      "✈️ Flights + local transport",
+      "🚌 Tours & transfers", 
+      "🚂 Train / overland",
+      "Mix of options"
+    ],
+    "party_type": [
+      "Solo",
+      "Couple", 
+      "Friends",
+      "Family with kids",
+      "Family with teens"
+    ],
+    "fitness_level": [
+      "Low‑key (short walks, light activity)",
+      "Moderate (day hikes, biking, city walking)",
+      "High (long hikes, skiing, multi-day treks)"
+    ],
+    "balance_ratio": [
+      "90% Outdoors / 10% Culture",
+      "70% Outdoors / 30% Culture",
+      "50/50 Balance",
+      "30% Outdoors / 70% Culture"
+    ],
+    "outdoor_activities": [
+      ["Hiking"],
+      ["Water activities (kayak, paddle, snorkel)"],
+      ["Skiing / Snowboarding"],
+      ["Cycling / Mountain biking"],
+      ["Rock climbing / Via ferrata"],
+      ["Wildlife viewing / Safari"],
+      ["Scenic drives"],
+      ["Hiking", "Water activities (kayak, paddle, snorkel)"],
+      ["Hiking", "Scenic drives"],
+      ["Wildlife viewing / Safari", "Water activities (kayak, paddle, snorkel)"]
+    ],
+    "non_outdoor_interests": [
+      ["Historic & archaeological sites"],
+      ["Art & museums"],
+      ["Food experiences (cooking classes, food tours, wine/beer tastings)"],
+      ["Markets & shopping"],
+      ["Local festivals & events"],
+      ["Historic & archaeological sites", "Art & museums"],
+      ["Food experiences (cooking classes, food tours, wine/beer tastings)", "Markets & shopping"]
+    ],
+    "guided_experiences": [
+      ["Guided outdoor activities (hikes, climbs, paddles)"],
+      ["Guided city tours"],
+      ["Food tours"],
+      ["Wine tours"],
+      ["Cooking classes"],
+      ["Wildlife guides / safari guides"],
+      ["Food tours", "Cooking classes"],
+      ["Guided city tours", "Wine tours"]
+    ],
+    "food_prefs": [
+      ["Adventurous eats"],
+      ["Super local / traditional spots"],
+      ["Food tours"],
+      ["Fine dining"],
+      ["Cooking classes"],
+      ["Adventurous eats", "Super local / traditional spots"],
+      ["Food tours", "Fine dining"]
+    ],
+    "dealbreakers": [
+      "No crowded tourist spots",
+      "Avoid extreme heat",
+      "No high altitude",
+      "Must be family-friendly",
+      "No language barriers",
+      "Accessible transportation needed",
+      "Avoid monsoon season",
+      "No extreme cold",
+      "Safe for solo female travel",
+      "Budget constraints under $2000"
+    ],
+    "trip_feel": [
+      "Epic adventure with stunning landscapes",
+      "Cultural immersion with local experiences",
+      "Relaxed exploration at my own pace",
+      "Active outdoor adventure with challenges",
+      "Luxury escape with comfort and style",
+      "Family bonding with kid-friendly activities",
+      "Romantic getaway for couples",
+      "Soul-searching solo journey",
+      "Educational trip with historical sites",
+      "Photography-focused travel"
+    ]
+  },
+  "i-know-where": {
+    "trip_structure": [
+      "🏠 Single destination (one home base, can include day trips)",
+      "🧳 Multi‑destination (changing locations/lodging)"
+    ],
+    "destination_main": [
+      "Reykjavik, Iceland", "Tokyo, Japan", "Paris, France", "Rome, Italy",
+      "Barcelona, Spain", "Amsterdam, Netherlands", "Prague, Czech Republic",
+      "Lisbon, Portugal", "Budapest, Hungary", "Vienna, Austria"
+    ],
+    "stops": [
+      "Florence, Rome, Naples", "Paris, Lyon, Nice", "Amsterdam, Brussels, Bruges",
+      "Prague, Vienna, Budapest", "Madrid, Seville, Granada", "London, Edinburgh, Dublin",
+      "Munich, Salzburg, Vienna", "Copenhagen, Stockholm, Oslo", "Zurich, Interlaken, Zermatt",
+      "Berlin, Prague, Vienna"
+    ],
+    "transport_mode": [
+      "Rental car / Self‑drive",
+      "Train / Public transport", 
+      "Tours & transfers",
+      "Mix of options"
+    ],
+    "intercity_transport": [
+      "Train / Public transport",
+      "Rental car / Self‑drive",
+      "Flights",
+      "Bus / Coach"
+    ],
+    "day_trips_interest": [
+      "Yes",
+      "No"
+    ],
+    "stops_order_flex": [
+      "Fixed order",
+      "Flexible"
+    ],
+    "anchors_single": [
+      "Concert tickets on March 15th",
+      "Wedding on June 20th",
+      "Blue Lagoon booking on day 3",
+      "Cooking class booked for Tuesday",
+      "Museum tour on Thursday morning",
+      "Wine tasting on Saturday",
+      "Hiking guide booked for day 5",
+      "Theater show on Friday night",
+      "Food tour on day 2",
+      "No fixed bookings yet"
+    ],
+    "anchors_multi": [
+      "Flight arrives Rome on day 1",
+      "Vatican tour booked in Rome",
+      "Train tickets Paris to Lyon",
+      "Hotel booking in Florence days 4-6",
+      "Wedding in Barcelona on day 8",
+      "Concert in Amsterdam final night",
+      "Cooking class in Tuscany on day 5",
+      "Museum pass for Vienna",
+      "Food tour in Prague on day 3",
+      "No fixed bookings yet"
+    ],
+    "season_window_shared": [
+      "March 2025", "June 2025", "September 2025", "December 2024",
+      "April 2025", "July 2025", "October 2025", "January 2025",
+      "May 2025", "August 2025", "November 2024", "February 2025"
+    ],
+    "trip_length_days_shared": [
+      "3 days", "5 days", "7 days", "10 days", "12 days", "14 days", "21 days"
+    ],
+    "lodging_booked": [
+      "Yes",
+      "No, I need recommendations",
+      "Partially booked"
+    ],
+    "lodging_type": [
+      "Hotels / Resorts",
+      "Boutique hotel / Guesthouse", 
+      "B&B / Farm stay",
+      "Hostels / Budget",
+      "Vacation rentals / Airbnb",
+      "Mix of different types"
+    ],
+    "lodging_budget": [
+      "Under $100/night",
+      "$100-200/night",
+      "$200-300/night", 
+      "$300-500/night",
+      "$500+/night"
+    ],
+    "party_type_shared": [
+      "Solo",
+      "Couple",
+      "Friends", 
+      "Family with kids",
+      "Family with teens"
+    ],
+    "fitness_level_shared": [
+      "Low‑key (short walks, light activity)",
+      "Moderate (day hikes, biking, city walking)",
+      "High (long hikes, skiing, multi-day treks)"
+    ],
+    "balance_ratio_shared": [
+      "90% Outdoors / 10% Culture",
+      "70% Outdoors / 30% Culture", 
+      "50/50 Balance",
+      "30% Outdoors / 70% Culture"
+    ],
+    "travel_style": [
+      "Active Explorer",
+      "Cultural Immersion",
+      "Balanced Mix", 
+      "Relaxed Pace",
+      "Luxury Experience"
+    ],
+    "activities": [
+      ["🥾 Hiking"],
+      ["🛣️ Scenic drives"],
+      ["🚲 Cycling / Mountain biking"],
+      ["🏊 Water activities (kayak, paddle, snorkel)"],
+      ["⛷️ Skiing / Snowboarding"],
+      ["🧗 Rock climbing / Via ferrata"],
+      ["🦌 Wildlife viewing / Safari"],
+      ["🚶 Walking tours"],
+      ["🎨 Art & museums"],
+      ["🏛️ Historic & archeological sites"],
+      ["🍷 Wine / Breweries"],
+      ["🥾 Hiking", "🛣️ Scenic drives"],
+      ["🚶 Walking tours", "🎨 Art & museums"],
+      ["🍷 Wine / Breweries", "🏛️ Historic & archeological sites"]
+    ],
+    "food_prefs_shared": [
+      ["Adventurous eats"],
+      ["Super local / traditional spots"],
+      ["Food tours"],
+      ["Fine dining"],
+      ["Cooking classes"],
+      ["Adventurous eats", "Food tours"],
+      ["Fine dining", "Super local / traditional spots"]
+    ],
+    "guided_prefs": [
+      ["Guided outdoor activities"],
+      ["Guided city tours"],
+      ["Food tours"],
+      ["Wine tours"],
+      ["Cooking classes"],
+      ["Museum/cultural guides"],
+      ["Food tours", "Wine tours"],
+      ["Guided city tours", "Museum/cultural guides"]
+    ]
+  }
+}

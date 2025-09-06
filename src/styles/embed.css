@@ -1,0 +1,190 @@
+/* Embed-specific styles for iframe context */
+
+/* Reset margins and padding for iframe embedding */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+/* When embedded, ensure smooth scrolling and proper sizing */
+.embedded-widget {
+  min-height: 300px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remove fixed positioning that might interfere with iframe */
+.embedded-widget * {
+  position: relative !important;
+}
+
+.embedded-widget *[style*="position: fixed"] {
+  position: absolute !important;
+}
+
+.embedded-widget *[style*="position: sticky"] {
+  position: relative !important;
+}
+
+/* Ensure proper spacing in embedded context */
+.embedded-widget .tw-container {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Handle form inputs in iframe context */
+.embedded-widget input,
+.embedded-widget textarea,
+.embedded-widget select,
+.embedded-widget button {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+
+/* Ensure buttons are properly sized for touch */
+.embedded-widget button {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* Handle scrolling within iframe */
+.embedded-widget {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive adjustments for small iframe sizes */
+@media (max-width: 480px) {
+  .embedded-widget {
+    padding: 0.5rem !important;
+  }
+  
+  .embedded-widget .tw-text-lg {
+    font-size: 1rem !important;
+  }
+  
+  .embedded-widget .tw-text-xl {
+    font-size: 1.125rem !important;
+  }
+  
+  .embedded-widget .tw-p-6 {
+    padding: 1rem !important;
+  }
+  
+  .embedded-widget .tw-p-8 {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Handle theme switching in embedded context */
+.embedded-widget[data-theme="dark"] {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.embedded-widget[data-theme="dark"] .tw-bg-white {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.embedded-widget[data-theme="dark"] .tw-bg-gray-50 {
+  background-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.embedded-widget[data-theme="dark"] .tw-text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.embedded-widget[data-theme="dark"] .tw-text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.embedded-widget[data-theme="dark"] .tw-border-gray-200 {
+  border-color: #4b5563 !important;
+}
+
+/* Prevent text selection issues in iframe */
+.embedded-widget {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Ensure proper focus styles work in iframe */
+.embedded-widget input:focus,
+.embedded-widget textarea:focus,
+.embedded-widget button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Handle loading states in embedded context */
+.embedded-widget .loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Ensure modals and overlays work properly in iframe */
+.embedded-widget .tw-fixed {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 9999;
+}
+
+/* Handle print styles for embedded content */
+@media print {
+  .embedded-widget {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Accessibility improvements for embedded context */
+.embedded-widget {
+  font-size: 16px; /* Prevent iOS zoom on form focus */
+}
+
+.embedded-widget input,
+.embedded-widget textarea {
+  font-size: 16px; /* Prevent iOS zoom */
+}
+
+/* Ensure proper contrast in all themes */
+.embedded-widget .tw-text-primary-600 {
+  color: #2563eb;
+}
+
+.embedded-widget[data-theme="dark"] .tw-text-primary-600 {
+  color: #60a5fa;
+}
+
+/* Handle iframe communication indicator (debug mode) */
+.embed-debug-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 255, 0, 0.8);
+  color: black;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.embed-debug-indicator.error {
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+}

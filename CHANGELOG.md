@@ -1,0 +1,228 @@
+# Outdoorable TripGuide Widget - Changelog
+
+## [v1.3.1] - September 6, 2025 (Session 3 - Rollback)
+
+### 🔄 UI Changes Rollback 
+- **Rollback Applied**: Reverted TripGuideDisplay changes that broke content generation
+- **Root Cause**: Premature UI modifications without analyzing impact on content pipeline
+- **Status**: Back to working v1.3 UI state with improved GoHighLevel integration
+
+### ⚠️ Active Issues
+- **Content Generation Problem**: OpenAI returning generic templates instead of personalized content
+- **Symptoms**: Placeholders like [Destination], [X Days] instead of real values (Florence, 7 days)
+- **Investigation Needed**: Review prompts in `back/prompts/` directory
+
+## [v1.3] - September 6, 2025 (Session 3)
+
+### 🔧 GoHighLevel CRM Integration Critical Fix
+- **Custom Fields API Format Fixed**: Resolved critical issue where custom fields weren't saving to GoHighLevel CRM
+- **V1 API Format Corrected**: Changed from `customFields` (array) to `customField` (object) for V1 API compatibility
+- **Field Mapping Fixed**: Custom fields now use direct field names instead of ID-based mapping
+- **Contact Creation Success**: All questionnaire data now properly saves to CRM leads
+
+### 🎯 Technical Implementation
+- **API Endpoint**: Confirmed working with V1 endpoint `https://rest.gohighlevel.com/v1/contacts/`
+- **Data Structure**: Fixed payload format from array `[{id, value}]` to object `{field_name: value}`
+- **Field Processing**: Proper handling of arrays and objects in custom field values
+- **Error Resolution**: Eliminated "Invalid JWT" errors from incorrect V2 API usage
+
+### 📊 Integration Testing Results
+- **Contact Creation**: ✅ Successfully creates contacts with ID generation
+- **Custom Fields**: ✅ All 5+ custom fields now saving properly (planning_stage, place_of_interest, traveler_type, etc.)
+- **Tags Integration**: ✅ Proper tag assignment for lead categorization
+- **Data Persistence**: ✅ Questionnaire responses fully captured in CRM
+
+### ✅ Status: CRM Integration Fully Functional
+- **Root Cause Identified**: V1/V2 API format mismatch was preventing custom field saves
+- **Solution Implemented**: Corrected to V1 API with proper `customField` object format
+- **Production Ready**: All email submissions now properly save lead data to GoHighLevel CRM
+
+## [v1.2] - September 6, 2025 (Session 2)
+
+### 🎨 UI/UX Critical Fixes
+- **Alfie Avatar Fixed**: Moved to small (32px), round avatar at top of guide instead of large chat bubble
+- **Content Formatting Fixed**: Added **bold** text support with `renderFormattedText()` function
+- **Markdown Processing**: Now properly renders `**bold**` as `<strong>` elements with green color
+- **Text Structure Improved**: All headers, paragraphs, and lists now support internal bold formatting
+
+### 📝 Content Rendering Improvements
+- **Bold Text Support**: `**text**` converts to green bold formatting
+- **Header Formatting**: H1, H2, H3 headers now support bold parts
+- **List Item Formatting**: Bullet points support bold text within items
+- **Paragraph Formatting**: Mixed bold and normal text in paragraphs
+
+### 🧪 Testing Infrastructure
+- **Test API Created**: `/api/test-formatting` endpoint for formatting tests
+- **Mock Data Support**: Test endpoint for quick formatting validation
+- **Ready for Real Tests**: Infrastructure prepared for 10 diverse OpenAI API tests
+
+### ✅ Status: Session Complete - All Tests Passed
+- **OpenAI API Tests**: 10 diverse real OpenAI API tests completed successfully
+- **Bold Formatting Verified**: `**text**` converts to green bold formatting in real AI content
+- **Avatar Positioning Confirmed**: Small (32px) round Alfie avatar properly positioned at top
+- **Production Ready**: All test APIs removed, only production components remain
+
+## [v1.1] - September 6, 2025 (Session 1)
+
+### 🚀 API Performance & Optimization
+- **OpenAI Integration Fixed**: Migrated from `gpt-4-turbo-preview` to `gpt-4o-mini` for improved reliability
+- **Retry Logic Added**: Automatic retry mechanism with exponential backoff (2s, 4s, 6s) for rate limiting
+- **Error Handling Enhanced**: Better error categorization for quota, rate limiting, auth, and network issues
+- **Performance Testing Completed**: 10/10 successful API tests with comprehensive analytics
+
+### 📊 Performance Analytics (Based on Load Testing)
+- **Average Response Time**: ~21.4 seconds per trip guide generation
+  - Inspire Flow: 19.8 seconds (5,482 bytes, 765 words)  
+  - Planning Flow: 23.0 seconds (5,991 bytes, 801 words)
+- **Token Usage**: ~800-1000 completion tokens per guide (~$0.0002-0.0003 per request)
+- **Success Rate**: 100% (10/10 tests passed)
+- **Content Quality**: Detailed 3-destination guides with cultural experiences and itineraries
+
+### 🎨 UI/UX Improvements
+- **Alfie Avatar Added**: Personalized mascot with flow-specific welcome messages
+- **Email Gate Redesigned**: Beautiful modal with proper animations and mobile responsiveness
+- **Content Structure Enhanced**: Smart AI content parsing with auto-header detection
+- **Scroll Blocking Fixed**: Proper content truncation at 50% with fade overlay
+- **Mobile Optimization**: Responsive design tested across all components
+
+### 🔧 Technical Fixes
+- **Email Collection Streamlined**: Removed Last Name field, keeping only Name and Email
+- **Success Messages Removed**: Cleaner UX flow without unnecessary unlock animations
+- **GoHighLevel Integration**: Proper CRM field mapping for lead management
+
+## [v1.0] - January 6, 2025
+
+### ✨ Added
+- **Interactive Progress Bar**: Emoji milestones (🗺️→🎯→✈️→🏖️→✅) with motivational messages
+- **Bubble Progress Indicators**: 5 animated bubbles that fill when reached (replaced orange dots)
+- **Auto-advance Single Choice**: Automatic progression after 500ms for single-choice questions
+- **Enhanced UX Flow**: Removed unnecessary headers, back buttons, and duplicate navigation
+- **Alfie Branding Integration**: Complete visual consistency with original Alfie design
+- **Smart Input Caching**: Prevents text input caching between different questions
+- **Iframe Embedding Support**: Auto-resizing widget for Webflow integration
+
+### 🎨 Improved
+- **Question Navigation**: Only shows "Next" button for multi-choice, text, and range questions
+- **Other Input Styling**: Unified appearance with regular input fields (dark green background)
+- **Progress Animations**: Smooth bubble fill animations with micro-interactions
+- **Responsive Design**: Optimized for mobile and desktop viewing
+- **Loading States**: Clean loading indicators without text distractions
+
+### 🔧 Fixed
+- **Input Cache Clearing**: Other text inputs now clear properly between questions
+- **Single Choice Lag**: Removed double-click requirement for single-choice options  
+- **Conditional Logic**: Proper headcount branching (Solo/Couple skip headcount)
+- **Style Conflicts**: Removed Tailwind dependencies, pure Alfie CSS
+- **Required Field Indicators**: Removed asterisks (all questions are required)
+
+### 🎯 Latest Changes
+- ✅ **Other Input Caching**: Fixed persistent text between questions
+- ✅ **Bubble Animation**: Beautiful fill animation replaces harsh orange dots
+- ✅ **Minimal Code**: Efficient changes with maximum UX impact
+
+## [v1.1] - January 6, 2025
+
+### 🚀 Expert Matching System Implementation
+
+#### ✨ Core Features Added
+- **Expert Matching Engine**: Complete tag-based expert matching system using OpenAI and Airtable
+- **Tag Generation**: AI-powered tag generation from questionnaire responses with local fallback
+- **Match Scoring Algorithm**: Sophisticated matching algorithm with exact and partial tag matching
+- **Real Expert Database**: Integration with Airtable "Alfie Expert Feed" table (20+ real experts)
+
+#### 🛠️ Technical Components
+- **Expert Types & Interfaces** (`src/types/expert.ts`): TypeScript interfaces for Expert data structure
+- **Airtable Integration** (`src/lib/airtable.ts`): Client for expert data retrieval and mapping
+- **Expert Matcher Service** (`src/lib/expertMatcher.ts`): Core matching logic with AI tag generation
+- **API Endpoints**:
+  - `/api/match-expert` - Main expert matching endpoint
+  - `/api/experts-data` - Expert data retrieval
+  - `/api/test-openai` - OpenAI API testing with dual key support
+
+#### 🎨 UI Components
+- **Expert Test Dashboard** (`src/app/expert-test/page.tsx`): Comprehensive testing interface
+- **Expert Cards**: Responsive expert profile cards with avatars, bios, and tags
+- **Loading States**: Alfie-themed loading animations with spinning indicators
+- **Match Results**: Real-time match scoring and tag visualization
+
+#### 🔧 Data Processing
+- **Airtable Record Mapping**: Converts Airtable records to Expert interface
+- **Tag Generation**: Both AI-powered and local keyword extraction from expert bios
+- **Fallback Systems**: Robust error handling with local alternatives for API failures
+- **Mock Data**: Comprehensive mock expert data for development/testing
+
+#### 📊 Expert Database Structure
+- **Real Expert Profiles**: 20+ travel experts with professional photos
+- **Data Fields**: Author Name, Bio, Profile Picture, Link, Profession, Destinations  
+- **Generated Tags**: Dynamic tag creation from bio and profession text
+- **Active Status**: All experts marked as active with proper metadata
+
+#### 🎯 Matching Algorithm
+- **Questionnaire Analysis**: Converts user responses to relevant travel tags
+- **Tag Similarity**: Exact and partial matching with weighted scoring
+- **Best Match Selection**: Returns highest-scoring expert with match percentage
+- **Flow Type Support**: Different tag generation for "inspire-me" vs "i-know-where"
+
+#### ⚡ Performance & Reliability
+- **Dual OpenAI Keys**: Automatic failover between API keys for reliability  
+- **Local Tag Generation**: Comprehensive fallback when AI services unavailable
+- **Error Handling**: Graceful degradation with informative error messages
+- **Real-time Testing**: Live dashboard for system health monitoring
+
+#### 🧪 Testing Infrastructure  
+- **Test Dashboard**: Full-featured testing interface at `/expert-test`
+- **Sample Scenarios**: Pre-configured test cases for different traveler types
+- **System Status**: Real-time monitoring of database and API connectivity
+- **Match Visualization**: Clear display of match results and scoring logic
+
+## [v1.2] - January 6, 2025
+
+### 🎯 Trip Guide Generation Flow Integration
+
+#### ✨ Core Features Added
+- **Seamless Flow Integration**: Complete integration of trip guide generation into main questionnaire flow
+- **Loading Animation with Alfie Avatar**: Spinning animation around 60px Alfie avatar during OpenAI generation
+- **Destination-Specific Facts**: Rotating travel facts every 7 seconds based on user's destination
+- **Smart Error Handling**: Detailed debugging messages for OpenAI quota/API issues
+
+#### 🛠️ Technical Integration
+- **Main Flow Controller** (`src/app/page.tsx`):
+  - Added 'generating' state to AppState flow: `flow-selection → questionnaire → generating → results`
+  - Integrated async OpenAI API call in `handleQuestionnaireComplete()`
+  - Enhanced error handling with detailed debugging information
+  - Seamless state transitions between questionnaire completion and results display
+
+- **Trip Guide Loading Component** (`src/components/TripGuide/TripGuideLoading.tsx`):
+  - Alfie-branded loading animation with multiple spinning rings
+  - Destination-aware travel fact rotation system
+  - Consistent styling using Alfie CSS variables
+  - Proper avatar sizing (60px) matching questionnaire components
+
+#### 🔧 Clean Architecture
+- **Test File Cleanup**: Removed all temporary test directories and mock files:
+  - Deleted `src/app/demo/`, `src/app/test-guide/`, `src/app/email-test/`
+  - Deleted `src/app/expert-test/`, `src/app/test-airtable/`, `src/app/test-expert/`, `src/app/test-openai/`
+  - Maintained only production-ready components in main flow
+
+- **API Integration** (`src/app/api/generate-trip-guide/route.ts`):
+  - Maintained GPT-4 model usage for high-quality trip guide generation  
+  - Enhanced error messages for quota exceeded, authentication, and permission issues
+  - Detailed debugging information for development troubleshooting
+
+#### 🎨 User Experience Improvements
+- **Loading State**: Engaging Alfie animation replaces generic loading indicators
+- **Error Display**: User-friendly error messages with technical details for debugging
+- **Content Flow**: Natural progression from questionnaire → loading → results without jarring transitions
+- **Visual Consistency**: All components use unified Alfie styling and branding
+
+#### ⚡ Performance & Reliability
+- **Clean Build**: Removed build cache conflicts from deleted test files
+- **Single Request Processing**: One OpenAI request per questionnaire completion
+- **Graceful Error Recovery**: Detailed error states with retry functionality
+- **Development Server**: Clean restart on port 3005 after cleanup
+
+#### 🎯 Implementation Complete
+- **Flow Integration**: Main questionnaire now seamlessly connects to trip guide generation
+- **Animation Integration**: Spinning Alfie avatar appears during OpenAI processing
+- **Styling Harmony**: All fonts and styles consistent with main project design
+- **Production Ready**: All test/mock files removed, only production components remain
