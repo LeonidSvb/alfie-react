@@ -29,13 +29,12 @@ Goal: Enrich each destination with high-quality, interest-aligned experiences �
 Required Sections:
 
 1. 🥾 Outdoor Activities to Prioritize
-Must reflect the group's activity level and interests (e.g. hiking, skiing, swimming)
+Must reflect the group's activity level and interests from input. Use actual {fitness_level_shared} and {activities} from questionnaire.
 Include:
-• Trail or activity name
+• Specific trail or activity name (real places only, no placeholders)
 • Length / effort / elevation if relevant
-• Seasonality or access notes
-• Link to official source (gov/tourism board preferred)
-• Balance effort and reward — suggest ambitious options only if clearly requested
+• Seasonality or access notes based on {season_window_shared}
+• Balance effort and reward based on actual fitness level from input
 
 2. 🏛️ Top Cultural Experiences
 Include local history, architecture, traditional arts, hands-on experiences, and quiet city wandering
@@ -52,19 +51,22 @@ Goal: Output a clean, tone-consistent TripGuide for the client — readable, reg
 Core Sections:
 
 Header (dynamic, no name)
-🗺️ Outdoorable TripGuide: [Title]
-Trip Type: [Single Base / Multi-Destination / Roadtrip]
-Trip Length: [X Days]
-Season: [If known]
-Group: [Couple, Family, etc. + energy]
-Style: [Trip type + tone (e.g. Cultural + Scenic Walks + Heritage Inns)]
+🗺️ Your Personal Trip Guide
+Trip Type: {Use actual trip_structure from input}
+Trip Length: {Use actual trip_length_days_shared from input} 
+Season: {Use actual season_window_shared from input}
+Group: {Use actual party_type_shared from input}
+Style: {Use actual activities and travel_style from input}
 
 🌄 Why This Route Works
 Summarize the trip's emotional flow and pacing choices.
 Explain logic around stop order, travel time, and what it offers the group.
 
 ✈️ Travel Snapshot
-Bullet summary of stops, duration, travel mode, and lodging preference.
+Home Base: {Use actual destination_main or anchors_single from input}
+Duration: {Use actual trip_length_days_shared from input}
+Key Experiences: {Use actual activities from input}
+Transit: {Use actual transport_mode from input}
 
 🚗 Recommended Transportation
 Include:
@@ -102,9 +104,11 @@ Output Guidelines
 • No names ever — omit "Prepared for" entirely
 • Plain text only: use headers, line breaks, and dashes
 • Tone: Informed, clear, slightly warm — no AI disclaimers, no "I" voice
-• Never fabricate a place, trail, or experience — link only to real sources
+• CRITICAL: Never use placeholders like [Lodging Name], [Trail Name], [X Days]. Always use actual values from questionnaire input or realistic specific names
+• Never fabricate a place, trail, or experience — use real destinations and activities
 • Must work even with partial or lightly filled input
 • Final TripGuide should feel usable, not hypothetical
+• Replace ALL brackets and placeholders with real content based on user input
 `;
 
 export default planningFlowPrompt;

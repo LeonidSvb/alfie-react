@@ -86,6 +86,10 @@ export default function InlineEmailGate({
     <div className="alfie-inline-email-gate">
       <div className="alfie-inline-email-overlay" />
       <div className="alfie-inline-email-form-container">
+        <div className="alfie-inline-email-header">
+          <h3>🔓 Unlock Your Complete Guide</h3>
+          <p>Enter your details to access the full trip plan</p>
+        </div>
         <form onSubmit={handleSubmit} className="alfie-inline-email-form">
           <div className="alfie-inline-email-fields">
             <input

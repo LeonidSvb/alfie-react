@@ -3,11 +3,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { TripGuideDisplayProps } from '@/types/tripGuide';
 import { EmailSubmissionData, CRMSubmissionResponse, EmailGateState } from '@/types/crm';
-import { useScrollProgress } from '@/hooks/useScrollProgress';
-import EmailGate from '@/components/EmailCollection/EmailGate';
+import InlineEmailGate from '@/components/EmailCollection/InlineEmailGate';
 import AIContentRenderer from './AIContentRenderer';
-
-const EMAIL_GATE_SCROLL_THRESHOLD = 50; // Show email gate when trying to scroll beyond visible area
 
 export default function TripGuideDisplay({
   tripGuide,
@@ -15,7 +12,8 @@ export default function TripGuideDisplay({
   className = ''
 }: TripGuideDisplayProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollProgress, hasReached } = useScrollProgress(containerRef);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [openedAccordionsCount, setOpenedAccordionsCount] = useState(0);
 
   const [emailGateState, setEmailGateState] = useState<EmailGateState>({
     isVisible: false,
@@ -34,7 +32,13 @@ export default function TripGuideDisplay({
     }
   }, [tripGuide.id]);
 
-  // No automatic email gate - only show when user tries to scroll beyond visible area
+  // Show inline email gate based on opened accordions count
+  useEffect(() => {
+    const threshold = tripGuide.flowType === 'inspire-me' ? 1 : 3;
+    if (openedAccordionsCount >= threshold && !emailGateState.hasSubmitted && !emailGateState.isVisible) {
+      setEmailGateState(prev => ({ ...prev, isVisible: true }));
+    }
+  }, [openedAccordionsCount, tripGuide.flowType, emailGateState.hasSubmitted, emailGateState.isVisible]);
 
   const handleEmailSubmit = async (data: EmailSubmissionData) => {
     setEmailGateState(prev => ({ 
@@ -85,6 +89,10 @@ export default function TripGuideDisplay({
     setEmailGateState(prev => ({ ...prev, isVisible: false }));
   };
 
+  const handleEmailSuccess = () => {
+    setEmailGateState(prev => ({ ...prev, isVisible: false, hasSubmitted: true }));
+  };
+
   // Calculate which content to show based on email submission status
   const shouldShowPartialContent = !emailGateState.hasSubmitted; // Show partial content until email submitted
   
@@ -126,21 +134,74 @@ export default function TripGuideDisplay({
 
   const { facts, sections } = useMemo(() => {
     const lines = displayContent.split('\n').map(l => l.trim()).filter(Boolean);
-    const knownHeaders = [
-      '🌄 Why This Route Works',
-      '✈️ Travel Snapshot',
-      '🚗 Recommended Transportation',
-      '🧳 What to Book Now',
-      '🥾 Outdoor Activities to Prioritize',
-      '🏛️ Top Cultural Experiences',
-      "🧠 Things You Maybe Haven't Thought Of",
-      '🧭 The Approach: Flexible Itinerary Flow'
-    ];
-    const isHeader = (line: string) => knownHeaders.some(h => line.startsWith(h));
+    
+    // Smart parsing based on flow type
+    const parseInspireMeContent = () => {
+      const sections: ParsedSection[] = [];
+      let i = 0;
+      
+      while (i < lines.length) {
+        const line = lines[i];
+        // Only create accordions for main Adventure Ideas
+        if (/^🏞️\s*Adventure Idea \d+:/.test(line)) {
+          const title = line;
+          const key = title.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+          const bodyLines: string[] = [];
+          i++;
+          
+          // Collect everything until next Adventure Idea or end
+          while (i < lines.length && !/^🏞️\s*Adventure Idea \d+:/.test(lines[i])) {
+            bodyLines.push(lines[i]);
+            i++;
+          }
+          
+          sections.push({ key, title, body: bodyLines.join('\n').trim() });
+          continue;
+        }
+        i++;
+      }
+      
+      return sections;
+    };
+    
+    const parsePlanningContent = () => {
+      const knownHeaders = [
+        '🌄 Why This Route Works',
+        '✈️ Travel Snapshot', 
+        '🚗 Recommended Transportation',
+        '🧳 What to Book Now',
+        '🥾 Outdoor Activities to Prioritize',
+        '🏛️ Top Cultural Experiences',
+        "🧠 Things You Maybe Haven't Thought Of",
+        '🧭 The Approach: Flexible Itinerary Flow'
+      ];
+      const isHeader = (line: string) => knownHeaders.some(h => line.startsWith(h));
+      
+      const sections: ParsedSection[] = [];
+      let i = 0;
+      
+      while (i < lines.length) {
+        const line = lines[i];
+        if (isHeader(line)) {
+          const title = line;
+          const key = title.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+          const bodyLines: string[] = [];
+          i++;
+          while (i < lines.length && !isHeader(lines[i])) {
+            bodyLines.push(lines[i]);
+            i++;
+          }
+          sections.push({ key, title, body: bodyLines.join('\n').trim() });
+          continue;
+        }
+        i++;
+      }
+      
+      return sections;
+    };
 
+    // Extract facts from content (both flows)
     const facts: ParsedFacts = {};
-    const sections: ParsedSection[] = [];
-
     const factPatterns: Array<[keyof ParsedFacts, RegExp[]]> = [
       ['tripType', [/^Trip\s*Type[:\s]+(.+)/i]],
       ['tripLength', [/^Trip\s*Length[:\s]+(.+)/i]],
@@ -160,82 +221,50 @@ export default function TripGuideDisplay({
       }
     }
 
-    let i = 0;
-    while (i < lines.length) {
-      const line = lines[i];
-      if (isHeader(line)) {
-        const title = line;
-        const key = title.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
-        const bodyLines: string[] = [];
-        i++;
-        while (i < lines.length && !isHeader(lines[i])) {
-          bodyLines.push(lines[i]);
-          i++;
-        }
-        sections.push({ key, title, body: bodyLines.join('\n').trim() });
-        continue;
-      }
-      i++;
-    }
+    // Parse sections based on flow type
+    const sections = tripGuide.flowType === 'inspire-me' 
+      ? parseInspireMeContent() 
+      : parsePlanningContent();
 
     return { facts, sections };
   }, [displayContent]);
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-  const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggleSection = (key: string) => {
+    setOpenSections(prev => {
+      const wasOpen = prev[key];
+      const newState = { ...prev, [key]: !wasOpen };
+      
+      // Count newly opened accordions for email gate trigger
+      if (!wasOpen) { // Just opened
+        setOpenedAccordionsCount(current => current + 1);
+      }
+      
+      return newState;
+    });
+  };
 
   const getSectionClass = (title: string): string => {
     // Все секции теперь используют единый стиль
     return 'alfie-section-standard';
   };
   
-  // Handle scroll blocking - prevent scrolling beyond visible area until email submitted
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (!shouldShowPartialContent) return; // Allow full scroll if submitted
-    
-    const container = e.currentTarget;
-    const scrollTop = container.scrollTop;
-    
-    // Block any scrolling attempts and show email gate
-    if (scrollTop > EMAIL_GATE_SCROLL_THRESHOLD && !emailGateState.isVisible) {
-      container.scrollTop = EMAIL_GATE_SCROLL_THRESHOLD;
-      setEmailGateState(prev => ({ ...prev, isVisible: true }));
-    }
-  };
+  // No scroll blocking - let users scroll freely, inline email appears at 30%
 
   return (
     <div className={`alfie-guide-container ${className}`}>
       <div
         ref={containerRef}
         className="alfie-guide-scroll-area"
-        onScroll={handleScroll}
       >
         <article className="alfie-guide-article">
-          {/* Alfie Avatar - small and at top */}
-          <div className="alfie-avatar-small">
-            <img src="https://framerusercontent.com/images/QiR33rqvTTyMw1FMaD9BeYrno9o.png" alt="Alfie" />
-          </div>
 
           {/* Trip Guide Header */}
           <header className="alfie-guide-header">
             <h1 className="alfie-guide-title">
               {tripGuide.title}
             </h1>
-            <div className="alfie-guide-tags">
-              {tripGuide.tags.slice(0, 3).map((tag, index) => (
-                <span key={index} className="alfie-guide-tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
           </header>
 
-          {/* Alfie Personal Message */}
-          <div className="alfie-personal-message">
-            <div className="alfie-message-bubble">
-              {alfieMessage}
-            </div>
-          </div>
 
           {/* Teaser facts (chips) for both flows */}
           {(facts.tripType || facts.tripLength || facts.season || facts.group || facts.style) && (
@@ -288,55 +317,20 @@ export default function TripGuideDisplay({
                 style={{ marginBottom: '-1px' }}
               />
             )}
-            
-            {/* Email gate call-to-action when truncated */}
-            {isContentTruncated && (
-              <div className="tw-text-center tw-py-6 tw-border-t tw-border-gray-200 tw-bg-gray-50 tw-rounded-lg tw-mt-4">
-                <div className="tw-flex tw-items-center tw-justify-center tw-mb-3">
-                  <span className="tw-text-2xl tw-mr-2">🔒</span>
-                  <span className="tw-text-lg tw-font-semibold tw-text-gray-700">
-                    More content locked
-                  </span>
-                </div>
-                <p className="tw-text-gray-600 tw-mb-4">
-                  You're seeing 50% of your personalized guide. 
-                  Enter your email to unlock the complete adventure plan!
-                </p>
-                <button
-                  onClick={() => setEmailGateState(prev => ({ ...prev, isVisible: true }))}
-                  className="tw-bg-green-600 tw-text-white tw-px-6 tw-py-3 tw-rounded-md tw-font-medium tw-hover:bg-green-700 tw-transition-colors tw-shadow-lg"
-                >
-                  Unlock Full Guide
-                </button>
-              </div>
+
+            {/* Inline Email Gate - appears within content flow at 30% */}
+            {emailGateState.isVisible && (
+              <InlineEmailGate
+                onEmailSubmit={handleEmailSubmit}
+                isSubmitting={emailGateState.isSubmitting}
+                tripGuide={tripGuide}
+                onSuccess={handleEmailSuccess}
+              />
             )}
             
           </div>
 
-          {/* Trip Guide Footer */}
-          <footer className="tw-mt-8 tw-pt-6 tw-border-t tw-border-gray-200">
-            <div className="tw-text-xs tw-text-gray-500 tw-text-center">
-              Generated by Alfie 🦊 • {new Date(tripGuide.generatedAt).toLocaleDateString()}
-            </div>
-          </footer>
         </article>
-      </div>
-
-      {/* Email Gate Modal */}
-      <EmailGate
-        isVisible={emailGateState.isVisible}
-        onEmailSubmit={handleEmailSubmit}
-        isSubmitting={emailGateState.isSubmitting}
-        tripGuide={tripGuide}
-        onClose={handleCloseEmailGate}
-      />
-
-      {/* Progress indicator */}
-      <div className="alfie-guide-progress">
-        <div 
-          className="alfie-guide-progress-bar"
-          style={{ width: `${scrollProgress}%` }}
-        />
       </div>
 
     </div>
