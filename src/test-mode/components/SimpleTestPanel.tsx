@@ -75,6 +75,7 @@ export default function SimpleTestPanel() {
     isRunning: false,
     logs: []
   });
+  const [emailTestResult, setEmailTestResult] = useState<any>(null);
 
   useEffect(() => {
     // Логируем активацию test mode
@@ -118,6 +119,100 @@ export default function SimpleTestPanel() {
     } catch (error) {
       logger.error('simple-test', 'generation_failed', {
         error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      setState(prev => ({ 
+        ...prev, 
+        isRunning: false,
+        logs: logger.getLogs()
+      }));
+    }
+  };
+
+  const handleEmailTest = async () => {
+    setState(prev => ({ ...prev, isRunning: true }));
+    setEmailTestResult(null);
+    
+    const logger = testRegistry.getLogger();
+    
+    try {
+      // Generate random test data
+      const flowType = Math.random() > 0.5 ? 'inspire-me' : 'i-know-where';
+      const testData = generateRandomAnswers(flowType);
+      
+      // Generate random email and name
+      const testEmails = [
+        'test.user@example.com',
+        'john.doe@test.com', 
+        'random.tester@demo.org',
+        'widget.test@sample.net',
+        'outdoor.test@example.io'
+      ];
+      const testNames = [
+        'Test User', 'John Doe', 'Random Tester', 
+        'Widget Test', 'Outdoor Test', 'Demo Person'
+      ];
+      
+      const randomEmail = getRandomItem(testEmails);
+      const randomName = getRandomItem(testNames);
+      
+      // Create email submission payload
+      const emailPayload = {
+        email: randomEmail,
+        firstName: randomName.split(' ')[0],
+        lastName: randomName.split(' ')[1] || '',
+        questionnaireSummary: testData.answers,
+        flowType: flowType,
+        tripGuideId: 'test-' + Date.now(),
+        tags: ['test-mode', flowType]
+      };
+      
+      logger.info('email-test', 'sending_test_email', {
+        email: randomEmail,
+        flowType: flowType,
+        fieldsCount: Object.keys(testData.answers).length
+      });
+      
+      // Send to API
+      const response = await fetch('/api/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailPayload)
+      });
+      
+      const result = await response.json();
+      
+      logger.info('email-test', 'test_email_response', {
+        success: result.success,
+        status: response.status,
+        contactId: result.contactId || 'none'
+      });
+      
+      setEmailTestResult({
+        success: result.success,
+        status: response.status,
+        response: result,
+        payload: emailPayload,
+        timestamp: new Date().toISOString()
+      });
+      
+      setState(prev => ({ 
+        ...prev, 
+        isRunning: false,
+        logs: logger.getLogs()
+      }));
+      
+    } catch (error) {
+      logger.error('email-test', 'test_email_failed', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      setEmailTestResult({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
       });
       
       setState(prev => ({ 
@@ -240,6 +335,24 @@ export default function SimpleTestPanel() {
         >
           {state.isRunning ? '⏳ Generating...' : '🗺️ Test "I Know Where" Flow'}
         </button>
+
+        <button
+          onClick={handleEmailTest}
+          disabled={state.isRunning}
+          style={{
+            width: '100%',
+            padding: '12px',
+            borderRadius: '6px',
+            border: 'none',
+            background: state.isRunning ? '#6c757d' : '#dc3545',
+            color: 'white',
+            fontWeight: 'bold',
+            cursor: state.isRunning ? 'not-allowed' : 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          {state.isRunning ? '⏳ Testing...' : '📧 Test Email Integration'}
+        </button>
       </div>
 
       {/* Generated Answers Display */}
@@ -277,11 +390,108 @@ export default function SimpleTestPanel() {
         </div>
       )}
 
+      {/* Email Test Result Display */}
+      {emailTestResult && (
+        <div style={{ marginBottom: '20px' }}>
+          <h4 style={{ margin: '0 0 8px 0', color: '#495057' }}>
+            📧 Email Test Result:
+          </h4>
+          <div style={{
+            padding: '12px',
+            borderRadius: '4px',
+            border: `1px solid ${emailTestResult.success ? '#d4edda' : '#f8d7da'}`,
+            background: emailTestResult.success ? '#d4edda' : '#f8d7da',
+            fontSize: '12px',
+            maxHeight: '400px',
+            overflow: 'auto'
+          }}>
+            <div style={{ marginBottom: '8px' }}>
+              <strong style={{ 
+                color: emailTestResult.success ? '#155724' : '#721c24' 
+              }}>
+                Status: {emailTestResult.success ? '✅ SUCCESS' : '❌ FAILED'}
+              </strong>
+            </div>
+            
+            {emailTestResult.success && emailTestResult.response?.contactId && (
+              <div style={{ marginBottom: '8px', color: '#155724' }}>
+                <strong>Contact ID:</strong> {emailTestResult.response.contactId}
+              </div>
+            )}
+
+            {emailTestResult.error && (
+              <div style={{ marginBottom: '8px', color: '#721c24' }}>
+                <strong>Error:</strong> {emailTestResult.error}
+              </div>
+            )}
+
+            <div style={{ marginBottom: '8px', color: '#495057' }}>
+              <strong>HTTP Status:</strong> {emailTestResult.status || 'N/A'}
+            </div>
+
+            <div style={{ marginBottom: '8px', color: '#495057' }}>
+              <strong>Test Email:</strong> {emailTestResult.payload?.email || 'N/A'}
+            </div>
+
+            <div style={{ marginBottom: '8px', color: '#495057' }}>
+              <strong>Flow Type:</strong> {emailTestResult.payload?.flowType || 'N/A'}
+            </div>
+
+            <div style={{ marginBottom: '8px', color: '#495057' }}>
+              <strong>Fields Sent:</strong> {emailTestResult.payload?.questionnaireSummary ? Object.keys(emailTestResult.payload.questionnaireSummary).length : 0}
+            </div>
+
+            <div style={{ marginBottom: '8px', color: '#495057' }}>
+              <strong>Timestamp:</strong> {new Date(emailTestResult.timestamp).toLocaleString()}
+            </div>
+
+            <details style={{ marginTop: '12px' }}>
+              <summary style={{ cursor: 'pointer', color: '#007bff' }}>
+                📋 Show Full Response
+              </summary>
+              <pre style={{ 
+                marginTop: '8px',
+                padding: '8px',
+                background: '#f8f9fa',
+                border: '1px solid #e9ecef',
+                borderRadius: '3px',
+                fontSize: '10px',
+                overflow: 'auto',
+                whiteSpace: 'pre-wrap'
+              }}>
+                {JSON.stringify(emailTestResult.response, null, 2)}
+              </pre>
+            </details>
+
+            <details style={{ marginTop: '8px' }}>
+              <summary style={{ cursor: 'pointer', color: '#007bff' }}>
+                📤 Show Sent Payload
+              </summary>
+              <pre style={{ 
+                marginTop: '8px',
+                padding: '8px',
+                background: '#f8f9fa',
+                border: '1px solid #e9ecef',
+                borderRadius: '3px',
+                fontSize: '10px',
+                overflow: 'auto',
+                whiteSpace: 'pre-wrap'
+              }}>
+                {JSON.stringify(emailTestResult.payload, null, 2)}
+              </pre>
+            </details>
+          </div>
+        </div>
+      )}
+
       {/* Clear Button */}
-      {state.generatedAnswers && (
+      {(state.generatedAnswers || emailTestResult) && (
         <div style={{ marginBottom: '20px' }}>
           <button
-            onClick={() => setState(prev => ({ ...prev, generatedAnswers: undefined }))}
+            onClick={() => {
+              setState(prev => ({ ...prev, generatedAnswers: undefined }));
+              setEmailTestResult(null);
+            }}
             style={{
               width: '100%',
               padding: '8px',
@@ -293,7 +503,7 @@ export default function SimpleTestPanel() {
               cursor: 'pointer'
             }}
           >
-            🗑️ Clear Generated Data
+            🗑️ Clear All Test Data
           </button>
         </div>
       )}

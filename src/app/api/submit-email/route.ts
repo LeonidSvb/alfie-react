@@ -31,64 +31,110 @@ export async function POST(request: NextRequest): Promise<NextResponse<CRMSubmis
 
     // Map questionnaire data to GoHighLevel custom fields
     const questionnaire = body.questionnaireSummary;
+    const flowType = body.flowType;
     
-    // Extract and map fields based on common questionnaire structure
-    const placeOfInterest = 
-      questionnaire.regions_interest || 
-      questionnaire.destination_main || 
-      questionnaire.destination || 
-      '';
+    // Extract and map fields based on flow-specific questionnaire structure
+    const placeOfInterest = flowType === 'inspire-me'
+      ? (Array.isArray(questionnaire.regions_interest) 
+          ? questionnaire.regions_interest.join(', ') 
+          : questionnaire.regions_interest || questionnaire.specific_regions || '')
+      : (questionnaire.destination_main || questionnaire.stops || '');
 
-    const travelerType = 
-      questionnaire.party_type || 
-      questionnaire.party_type_shared ||
-      questionnaire.travel_party || 
-      '';
+    const travelerType = questionnaire.party_type || questionnaire.party_type_shared || '';
 
-    const activityLevel = 
-      questionnaire.fitness_level || 
-      questionnaire.fitness_level_shared ||
-      questionnaire.activity_level || 
-      '';
+    const activityLevel = questionnaire.fitness_level || questionnaire.fitness_level_shared || '';
 
-    // Serialize activity arrays - include all possible activity fields
-    const activityPreferences = questionnaire.activities_interest || questionnaire.activities
-      ? JSON.stringify(Array.isArray(questionnaire.activities_interest || questionnaire.activities) 
-          ? (questionnaire.activities_interest || questionnaire.activities)
-          : [questionnaire.activities_interest || questionnaire.activities])
-      : '';
+    // Map activity preferences based on flow type
+    const activityPreferences = (() => {
+      let activities = '';
+      
+      if (flowType === 'inspire-me') {
+        activities = questionnaire.outdoor_activities || questionnaire.non_outdoor_interests || '';
+      } else {
+        activities = questionnaire.activities || '';
+      }
+      
+      if (activities && Array.isArray(activities)) {
+        return JSON.stringify(activities.flat()); // Flatten nested arrays
+      } else if (activities) {
+        return Array.isArray(activities) ? JSON.stringify(activities) : String(activities);
+      }
+      
+      return '';
+    })();
 
-    // Include travel_style and guided preferences
-    const guidedPreferences = 
-      questionnaire.guided_preference || 
-      questionnaire.guided_prefs || 
-      questionnaire.travel_style
-      ? JSON.stringify(Array.isArray(questionnaire.guided_preference || questionnaire.guided_prefs) 
-          ? (questionnaire.guided_preference || questionnaire.guided_prefs)
-          : [questionnaire.guided_preference || questionnaire.guided_prefs || questionnaire.travel_style])
-      : '';
+    // Map guided preferences based on flow type
+    const guidedPreferences = (() => {
+      let guided = '';
+      
+      if (flowType === 'inspire-me') {
+        guided = questionnaire.guided_experiences || questionnaire.travel_style || '';
+      } else {
+        guided = questionnaire.guided_prefs || questionnaire.travel_style || '';
+      }
+      
+      if (guided && Array.isArray(guided)) {
+        return JSON.stringify(guided.flat()); // Flatten nested arrays
+      } else if (guided) {
+        return Array.isArray(guided) ? JSON.stringify(guided) : String(guided);
+      }
+      
+      return '';
+    })();
 
-    const travelBudget = questionnaire.budget || questionnaire.budget_range || '';
-    const travelDates = questionnaire.travel_dates || questionnaire.when_travel || questionnaire.season_window_shared || '';
+    // Map travel budget based on flow type
+    const travelBudget = flowType === 'inspire-me'
+      ? questionnaire.budget_style || ''
+      : questionnaire.lodging_budget || '';
 
-    // Create GoHighLevel contact (using simplified interface)
+    // Map travel dates based on flow type
+    const travelDates = flowType === 'inspire-me'
+      ? questionnaire.season_window || questionnaire.trip_length_days || ''
+      : questionnaire.season_window_shared || questionnaire.trip_length_days_shared || '';
+
+    // Ensure all required fields have values (fallbacks to prevent empty fields)
+    const ensureValue = (value: any, fallback: string = 'Not specified') => {
+      if (!value || value === '' || value === '[]' || value === 'null') {
+        return fallback;
+      }
+      return String(value);
+    };
+
+    // Create GoHighLevel contact with guaranteed field values
     const contact: GoHighLevelContact = {
       email: body.email,
       firstName: body.firstName,
       lastName: body.lastName,
       tags: ['tripguide-widget', body.flowType, ...body.tags],
       customFields: {
-        planning_stage: body.flowType,
-        place_of_interest: placeOfInterest,
-        traveler_type: travelerType,
-        activity_level: activityLevel,
-        activity_preferences: activityPreferences,
-        guided_preferences: guidedPreferences,
-        travel_budget: travelBudget,
-        travel_dates: travelDates,
+        planning_stage: ensureValue(body.flowType, 'General inquiry'),
+        place_of_interest: ensureValue(placeOfInterest, 'To be determined'),
+        traveler_type: ensureValue(travelerType, 'Individual traveler'),
+        activity_level: ensureValue(activityLevel, 'Moderate activity'),
+        activity_preferences: ensureValue(activityPreferences, 'General activities'),
+        guided_preferences: ensureValue(guidedPreferences, 'Mix of guided and independent'),
+        travel_budget: ensureValue(travelBudget, 'Budget to be discussed'),
+        travel_dates: ensureValue(travelDates, 'Flexible timing'),
         full_survey_data: JSON.stringify(questionnaire)
       }
     };
+
+    // Log field mapping for debugging
+    console.log('GoHighLevel Field Mapping:', {
+      flowType: body.flowType,
+      email: body.email,
+      originalData: Object.keys(questionnaire),
+      mappedFields: {
+        planning_stage: contact.customFields.planning_stage,
+        place_of_interest: contact.customFields.place_of_interest,
+        traveler_type: contact.customFields.traveler_type,
+        activity_level: contact.customFields.activity_level,
+        activity_preferences: contact.customFields.activity_preferences?.substring(0, 100) + '...',
+        guided_preferences: contact.customFields.guided_preferences?.substring(0, 100) + '...',
+        travel_budget: contact.customFields.travel_budget,
+        travel_dates: contact.customFields.travel_dates
+      }
+    });
 
     const result = await ghlClient.createContact(contact);
 
