@@ -102,9 +102,9 @@ export default function HomePage({
       }
     };
 
-    window.addEventListener('testModeGenerate', handleTestGenerate as EventListener);
+    window.addEventListener('testModeGenerate', handleTestGenerate as unknown as EventListener);
     return () => {
-      window.removeEventListener('testModeGenerate', handleTestGenerate as EventListener);
+      window.removeEventListener('testModeGenerate', handleTestGenerate as unknown as EventListener);
     };
   }, []);
 

@@ -1691,3 +1691,58 @@
 /* Primary color variants for existing styles */
 .tw-text-primary-600 { color: var(--alfie-green); }
 .tw-border-primary-600 { border-color: var(--alfie-green); }
+
+/* Универсальный стиль для всех секций */
+.alfie-section-standard {
+    position: relative;
+    background: linear-gradient(180deg, #f8fcf9 0%, #f2f9f4 100%);
+    border: 1px solid var(--alfie-dark-green);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 6px 22px rgba(74, 139, 92, 0.08);
+}
+
+.alfie-section-standard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(90deg, var(--alfie-green), #5BA16E);
+}
+
+/* Стандартизация всех списков */
+.alfie-section-standard .alfie-guide-list-item::before {
+    content: '🌲';
+}
+
+/* Стандартизация параграфов для всех секций */
+.alfie-section-standard .alfie-guide-paragraph {
+    max-width: 65ch;
+    margin: 12px auto;
+    line-height: 1.75;
+    letter-spacing: 0.005em;
+    font-weight: 400;
+}
+
+/* Стандартизация выделенного текста для всех секций */
+.alfie-section-standard .alfie-guide-paragraph strong,
+.alfie-section-standard .alfie-guide-h2 strong,
+.alfie-section-standard .alfie-guide-h3 strong {
+    background: rgba(74, 139, 92, 0.08);
+    color: var(--alfie-text);
+    padding: 0.05rem 0.35rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 480px) {
+    .alfie-section-standard .alfie-guide-paragraph {
+        margin: 10px auto;
+        line-height: 1.7;
+    }
+}

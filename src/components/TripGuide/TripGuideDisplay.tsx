@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { TripGuideDisplayProps } from '@/types/tripGuide';
 import { EmailSubmissionData, CRMSubmissionResponse, EmailGateState } from '@/types/crm';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
@@ -111,25 +111,82 @@ export default function TripGuideDisplay({
   const displayContent = truncateContent(tripGuide.content);
   const isContentTruncated = shouldShowPartialContent && displayContent.length < tripGuide.content.length;
   
-  // Generate Alfie message based on flow type
-  const getAlfieMessage = (flowType: string): string => {
-    const messages = {
-      'inspire-me': [
-        "🦊 Hey there! I've crafted the perfect adventure just for you - let's explore!",
-        "🦊 Ready for something amazing? I've discovered some incredible experiences!",
-        "🦊 Adventure awaits! I've designed this guide with your spirit in mind!",
-        "🦊 I've been planning your perfect outdoor escape - you're going to love this!"
-      ],
-      'i-know-where': [
-        "🦊 Great choice of destination! I've mapped out the best experiences for you!",
-        "🦊 You picked an amazing place! Here's your personalized adventure guide!",
-        "🦊 I know this destination well - prepared something special just for you!",
-        "🦊 Perfect spot for adventure! Let me show you the hidden gems I've found!"
-      ]
-    };
-    
-    const flowMessages = messages[flowType as keyof typeof messages] || messages['inspire-me'];
-    return flowMessages[Math.floor(Math.random() * flowMessages.length)];
+  // Static Alfie message - no more flickering
+  const alfieMessage = "🦊 I know this destination well - prepared something special just for you!";
+
+  // Enhanced UI for both flows (chips + accordions)
+  type ParsedSection = { key: string; title: string; body: string };
+  type ParsedFacts = {
+    tripType?: string;
+    tripLength?: string;
+    season?: string;
+    group?: string;
+    style?: string;
+  };
+
+  const { facts, sections } = useMemo(() => {
+    const lines = displayContent.split('\n').map(l => l.trim()).filter(Boolean);
+    const knownHeaders = [
+      '🌄 Why This Route Works',
+      '✈️ Travel Snapshot',
+      '🚗 Recommended Transportation',
+      '🧳 What to Book Now',
+      '🥾 Outdoor Activities to Prioritize',
+      '🏛️ Top Cultural Experiences',
+      "🧠 Things You Maybe Haven't Thought Of",
+      '🧭 The Approach: Flexible Itinerary Flow'
+    ];
+    const isHeader = (line: string) => knownHeaders.some(h => line.startsWith(h));
+
+    const facts: ParsedFacts = {};
+    const sections: ParsedSection[] = [];
+
+    const factPatterns: Array<[keyof ParsedFacts, RegExp[]]> = [
+      ['tripType', [/^Trip\s*Type[:\s]+(.+)/i]],
+      ['tripLength', [/^Trip\s*Length[:\s]+(.+)/i]],
+      ['season', [/^Season[:\s]+(.+)/i]],
+      ['group', [/^Group[:\s]+(.+)/i]],
+      ['style', [/^Style[:\s]+(.+)/i]],
+    ];
+
+    for (const line of lines) {
+      for (const [key, patterns] of factPatterns) {
+        for (const re of patterns) {
+          const m = line.match(re);
+          if (m && !facts[key]) {
+            facts[key] = m[1].trim();
+          }
+        }
+      }
+    }
+
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (isHeader(line)) {
+        const title = line;
+        const key = title.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+        const bodyLines: string[] = [];
+        i++;
+        while (i < lines.length && !isHeader(lines[i])) {
+          bodyLines.push(lines[i]);
+          i++;
+        }
+        sections.push({ key, title, body: bodyLines.join('\n').trim() });
+        continue;
+      }
+      i++;
+    }
+
+    return { facts, sections };
+  }, [displayContent]);
+
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const getSectionClass = (title: string): string => {
+    // Все секции теперь используют единый стиль
+    return 'alfie-section-standard';
   };
   
   // Handle scroll blocking - prevent scrolling beyond visible area until email submitted
@@ -176,13 +233,53 @@ export default function TripGuideDisplay({
           {/* Alfie Personal Message */}
           <div className="alfie-personal-message">
             <div className="alfie-message-bubble">
-              {getAlfieMessage(tripGuide.flowType)}
+              {alfieMessage}
             </div>
           </div>
 
+          {/* Teaser facts (chips) for both flows */}
+          {(facts.tripType || facts.tripLength || facts.season || facts.group || facts.style) && (
+            <div className="alfie-guide-meta-chips">
+              {facts.tripType && <span className="alfie-chip chip-triptype">{facts.tripType}</span>}
+              {facts.tripLength && <span className="alfie-chip chip-triplength">{facts.tripLength}</span>}
+              {facts.season && <span className="alfie-chip chip-season">{facts.season}</span>}
+              {facts.group && <span className="alfie-chip chip-group">{facts.group}</span>}
+              {facts.style && <span className="alfie-chip chip-style">{facts.style}</span>}
+            </div>
+          )}
+
           {/* Trip Guide Content */}
           <div style={{ position: 'relative' }}>
-            <AIContentRenderer content={displayContent} />
+            {sections.length > 0 ? (
+              <div className="alfie-accordion">
+                {sections.filter(s => s.title.startsWith('🌄')).map(s => (
+                  <div key={s.key} className="alfie-accordion-item open">
+                    <div className="alfie-accordion-header">
+                      <span className="alfie-accordion-title">{s.title}</span>
+                    </div>
+                    <div className={`alfie-accordion-body ${getSectionClass(s.title)}`}>
+                      <AIContentRenderer content={s.body} />
+                    </div>
+                  </div>
+                ))}
+
+                {sections.filter(s => !s.title.startsWith('🌄')).map(s => (
+                  <div key={s.key} className={`alfie-accordion-item ${openSections[s.key] ? 'open' : ''}`}>
+                    <button type="button" className="alfie-accordion-header" onClick={() => toggleSection(s.key)}>
+                      <span className="alfie-accordion-title">{s.title}</span>
+                      <span className={`alfie-accordion-chevron ${openSections[s.key] ? 'rotated' : ''}`}>⌄</span>
+                    </button>
+                    {openSections[s.key] && (
+                      <div className={`alfie-accordion-body ${getSectionClass(s.title)}`}>
+                        <AIContentRenderer content={s.body} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <AIContentRenderer content={displayContent} />
+            )}
             
             {/* Fade overlay when showing partial content */}
             {isContentTruncated && (
